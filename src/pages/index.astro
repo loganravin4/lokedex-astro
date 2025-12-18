@@ -1,16 +1,168 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PokedexCard from '../components/pokemon/PokedexCard';
+import TypeBadge from '../components/pokemon/TypeBadge';
 
+// Sample projects - you'll replace this with Sanity data later
+const projects = [
+  {
+    id: '1',
+    name: 'WANDR',
+    description: 'React Native social discovery app with real-time features and location-based recommendations.',
+    types: ['fullstack'],
+    techs: ['React Native', 'TypeScript', 'Node.js', 'PostgreSQL'],
+    github: 'https://github.com/yourusername/wandr',
+  },
+  {
+    id: '2',
+    name: 'Via Analytics',
+    description: 'Industrial membrane filtration monitoring platform with 11 specialized Grafana dashboards.',
+    types: ['fullstack'],
+    techs: ['Grafana', 'InfluxDB', 'React', 'TypeScript', 'PostgreSQL'],
+  },
+  {
+    id: '3',
+    name: 'Premalytics',
+    description: 'Premier League analytics platform with ML-powered predictions and player performance tracking.',
+    types: ['ml', 'fullstack'],
+    techs: ['Python', 'PyTorch', 'React', 'FastAPI', 'PostgreSQL'],
+    github: 'https://github.com/yourusername/premalytics',
+  },
+];
+
+const techStack = [
+  { type: 'electric', tech: 'TypeScript' },
+  { type: 'water', tech: 'React' },
+  { type: 'fire', tech: 'Node.js' },
+  { type: 'grass', tech: 'Python' },
+  { type: 'psychic', tech: 'PostgreSQL' },
+  { type: 'dragon', tech: 'PyTorch' },
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="Logan's Portfolio - Gotta Code 'Em All!">
+  <main class="container mx-auto px-4 py-8 max-w-7xl">
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center mb-20">
+      <div class="text-center">
+        <h1 class="font-pokemon text-4xl md:text-6xl text-poke-yellow mb-6 animate-pulse-slow">
+          LOGAN'S
+          <br />
+          <span class="text-poke-red">PORTFOLIO</span>
+        </h1>
+        <p class="text-xl md:text-2xl text-white/90 mb-8 font-mono">
+          Full-Stack Developer | Northeastern University
+        </p>
+        <div class="flex justify-center gap-4 mb-12">
+          <a
+            href="#projects"
+            class="bg-poke-red hover:bg-poke-red/80 transition-colors px-8 py-4 rounded-lg font-bold text-white text-lg border-4 border-white/20"
+          >
+            View Projects
+          </a>
+          
+          <a
+            href="#about"
+            class="bg-poke-blue hover:bg-poke-blue/80 transition-colors px-8 py-4 rounded-lg font-bold text-white text-lg border-4 border-white/20"
+          >
+            About Me
+          </a>
+        </div>
+        <p class="font-pokemon text-sm text-white/60">
+          Gotta Code 'Em All!
+        </p>
+      </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section id="about" class="mb-20">
+      <h2 class="font-pokemon text-3xl text-poke-yellow mb-8 text-center">
+        TYPE EFFECTIVENESS
+      </h2>
+      <div class="flex flex-wrap justify-center gap-4">
+        {techStack.map((item) => (
+          <TypeBadge type={item.type} tech={item.tech} client:load />
+        ))}
+      </div>
+    </section>
+
+    <!-- Projects Section (Pokédex) -->
+    <section id="projects" class="mb-20">
+      <div class="text-center mb-12">
+        <h2 class="font-pokemon text-3xl text-poke-yellow mb-4">
+          PROJECT POKÉDEX
+        </h2>
+        <p class="text-white/80">
+          A collection of projects I've caught and trained
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {projects.map((project, index) => (
+          <PokedexCard project={project} index={index} client:load />
+        ))}
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="mb-20 bg-gradient-to-r from-poke-blue/20 to-poke-psychic/20 rounded-2xl p-8 border-4 border-poke-yellow/30">
+      <h2 class="font-pokemon text-3xl text-poke-yellow mb-6">
+        ABOUT THE TRAINER
+      </h2>
+      <div class="space-y-4 text-white/90">
+        <p>
+          Hey! I'm Logan, a Computer Science and Computer Engineering student at Northeastern University 
+          with a 3.96 GPA. Currently working as a Software Engineer Co-op at NExT Consulting, 
+          building analytics platforms for Via Separations.
+        </p>
+        <p>
+          I serve as Technical Lead at Student Government Association managing 8 engineers and 
+          work as a Full-Stack Engineer at Forge Product Development Lab.
+        </p>
+        <p>
+          When I'm not coding, you'll find me involved with UTSAV (Northeastern's South Asian cultural org), 
+          mentoring through JUMP, gaming on Roblox, or vibing to my 60,000 minutes of Spotify.
+        </p>
+      </div>
+      
+      <div class="flex gap-4 mt-8">
+        <a
+          href="https://github.com/yourusername"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="bg-poke-black hover:bg-poke-black/80 transition-colors px-6 py-3 rounded-lg font-bold text-white"
+        >
+          GitHub
+        </a>
+        
+        <a
+          href="https://linkedin.com/in/yourprofile"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="bg-poke-blue hover:bg-poke-blue/80 transition-colors px-6 py-3 rounded-lg font-bold text-white"
+        >
+          LinkedIn
+        </a>
+        
+        <a
+          href="mailto:your.email@northeastern.edu"
+          class="bg-poke-red hover:bg-poke-red/80 transition-colors px-6 py-3 rounded-lg font-bold text-white"
+        >
+          Contact
+        </a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-8 text-white/60 font-pokemon text-xs">
+      <p>Made with 💙 by Logan</p>
+      <p class="mt-2">Powered by Astro • TypeScript • Tailwind CSS</p>
+    </footer>
+  </main>
+</BaseLayout>
+
+<style>
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+</style>

@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@theme {
+  --color-poke-red: #FF0000;
+  --color-poke-blue: #3B4CCA;
+  --color-poke-yellow: #FFDE00;
+  --color-poke-black: #2B2B2B;
+  --color-poke-white: #FFFFFF;
+  --color-poke-normal: #A8A878;
+  --color-poke-fire: #F08030;
+  --color-poke-water: #6890F0;
+  --color-poke-electric: #F8D030;
+  --color-poke-grass: #78C850;
+  --color-poke-ice: #98D8D8;
+  --color-poke-fighting: #C03028;
+  --color-poke-poison: #A040A0;
+  --color-poke-ground: #E0C068;
+  --color-poke-flying: #A890F0;
+  --color-poke-psychic: #F85888;
+  --color-poke-bug: #A8B820;
+  --color-poke-rock: #B8A038;
+  --color-poke-ghost: #705898;
+  --color-poke-dragon: #7038F8;
+  --color-poke-dark: #705848;
+  --color-poke-steel: #B8B8D0;
+  --color-poke-fairy: #EE99AC;
+
+  --font-family-pokemon: "Press Start 2P", cursive;
+  --font-family-mono: "JetBrains Mono", monospace;
+}
+
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@theme {
+  --animate-bounce-slow: bounce-slow 3s infinite;
+  --animate-pulse-slow: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
