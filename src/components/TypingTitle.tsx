@@ -1,0 +1,91 @@
+import { useState, useEffect, useMemo } from 'react';
+
+interface TypingTitleProps {
+  titles: string[];
+  baseText?: string;
+  typingSpeed?: number;
+  deletingSpeed?: number;
+  pauseDuration?: number;
+}
+
+// Fisher-Yates shuffle algorithm
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+export default function TypingTitle({
+  titles,
+  baseText = '',
+  typingSpeed = 100,
+  deletingSpeed = 50,
+  pauseDuration = 2000,
+}: TypingTitleProps) {
+  // Shuffle titles once on mount
+  const shuffledTitles = useMemo(() => shuffleArray(titles), [titles]);
+  
+  const [currentTitleIndex, setCurrentTitleIndex] = useState(0);
+  const [displayedText, setDisplayedText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isPaused, setIsPaused] = useState(true); // Start paused to show first character after mount
+
+  useEffect(() => {
+    // Initial delay before starting
+    if (isPaused && displayedText === '') {
+      const initialTimer = setTimeout(() => {
+        setIsPaused(false);
+      }, 500);
+      return () => clearTimeout(initialTimer);
+    }
+
+    if (isPaused && displayedText.length > 0) {
+      // Pause after typing complete
+      const pauseTimer = setTimeout(() => {
+        setIsPaused(false);
+        setIsDeleting(true);
+      }, pauseDuration);
+      return () => clearTimeout(pauseTimer);
+    }
+
+    const currentTitle = shuffledTitles[currentTitleIndex];
+    if (!currentTitle) return;
+
+    const speed = isDeleting ? deletingSpeed : typingSpeed;
+
+    const timer = setTimeout(() => {
+      if (!isDeleting) {
+        // Typing
+        if (displayedText.length < currentTitle.length) {
+          setDisplayedText(currentTitle.slice(0, displayedText.length + 1));
+        } else {
+          // Finished typing, pause then delete
+          setIsPaused(true);
+        }
+      } else {
+        // Deleting
+        if (displayedText.length > 0) {
+          setDisplayedText(displayedText.slice(0, -1));
+        } else {
+          // Finished deleting, move to next title
+          setIsDeleting(false);
+          setCurrentTitleIndex((prev) => (prev + 1) % shuffledTitles.length);
+        }
+      }
+    }, speed);
+
+    return () => clearTimeout(timer);
+  }, [displayedText, isDeleting, isPaused, currentTitleIndex, shuffledTitles, typingSpeed, deletingSpeed, pauseDuration]);
+
+  return (
+    <span>
+      {baseText}
+      {displayedText}
+      <span className="text-poke-yellow animate-pulse">|</span>
+    </span>
+  );
+}
+
