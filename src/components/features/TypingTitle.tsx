@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { trackTitleView } from '../../lib/analytics';
 
 interface TypingTitleProps {
   titles: string[];
@@ -62,7 +63,9 @@ export default function TypingTitle({
         if (displayedText.length < currentTitle.length) {
           setDisplayedText(currentTitle.slice(0, displayedText.length + 1));
         } else {
-          // Finished typing, pause then delete
+          // Finished typing, track the title view
+          trackTitleView(currentTitle);
+          // Pause then delete
           setIsPaused(true);
         }
       } else {

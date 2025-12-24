@@ -126,6 +126,8 @@ export default function PokedexCard({ project, index }: PokedexCardProps) {
                   rel="noopener noreferrer"
                   className="flex-1 bg-black/40 hover:bg-black/60 transition-colors px-4 py-3 rounded-lg text-center font-bold text-white text-sm"
                   onClick={(e) => e.stopPropagation()}
+                  data-track-project={project.name}
+                  data-track-action="github"
                 >
                   GitHub →
                 </a>
@@ -137,6 +139,8 @@ export default function PokedexCard({ project, index }: PokedexCardProps) {
                   rel="noopener noreferrer"
                   className="flex-1 bg-poke-yellow hover:bg-poke-yellow/80 transition-colors px-4 py-3 rounded-lg text-center font-bold text-poke-black text-sm"
                   onClick={(e) => e.stopPropagation()}
+                  data-track-project={project.name}
+                  data-track-action="demo"
                 >
                   Live Demo →
                 </a>

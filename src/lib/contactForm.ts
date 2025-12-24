@@ -1,3 +1,5 @@
+import { trackFormEvent } from './analytics';
+
 interface Web3FormsResponse {
   success: boolean;
   message?: string;
@@ -125,6 +127,15 @@ export function initContactForm(): void {
     return;
   }
 
+  // Track form started when user first interacts
+  let formStarted = false;
+  form.addEventListener('focusin', () => {
+    if (!formStarted) {
+      trackFormEvent('started', 'contact');
+      formStarted = true;
+    }
+  }, { once: true });
+
   form.addEventListener('submit', async (e: SubmitEvent): Promise<void> => {
     e.preventDefault();
     
@@ -147,6 +158,7 @@ export function initContactForm(): void {
         errorText.textContent = rateLimitCheck.errorMessage || 'Please wait before submitting again.';
       }
       errorMessage.classList.remove('hidden');
+      trackFormEvent('error', 'contact');
       return;
     }
     
@@ -186,11 +198,15 @@ export function initContactForm(): void {
         // Update rate limit after successful submission
         updateRateLimit();
         
+        // Track successful submission
+        trackFormEvent('submitted', 'contact');
+        
         // Show success message and hide form
         form.style.display = 'none';
         successMessage.classList.remove('hidden');
       } else {
         // Show error message
+        trackFormEvent('error', 'contact');
         errorMessage.classList.remove('hidden');
         submitBtn.disabled = false;
         submitText.classList.remove('hidden');
@@ -199,6 +215,7 @@ export function initContactForm(): void {
     } catch (error: unknown) {
       // Show error message
       console.error('Form submission error:', error);
+      trackFormEvent('error', 'contact');
       errorMessage.classList.remove('hidden');
       submitBtn.disabled = false;
       submitText.classList.remove('hidden');

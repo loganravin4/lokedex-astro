@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { urlForImage } from '../lib/fetchExperiences';
+import { urlForImage } from '../../lib/fetchExperiences';
 
 interface ExperienceProject {
   name: string;

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ProjectFilter from '../components/pokemon/ProjectFilter';
+import ProjectFilter from '../components/projects/ProjectFilter';
+import AnalyticsTracker from '../components/analytics/AnalyticsTracker';
 import { fetchProjects } from '../lib/fetchProjects';
 
 // Fetch ALL projects from Sanity
@@ -19,6 +20,7 @@ const transformedProjects = projects.map((project) => ({
 ---
 
 <BaseLayout title="Complete Lokédex - Logan's Portfolio">
+  <AnalyticsTracker pageName="Projects" client:load />
   <main class="container mx-auto px-4 py-8 max-w-6xl">
     <!-- Header -->
     <section class="text-center mb-12 pt-8">
