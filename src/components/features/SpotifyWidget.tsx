@@ -42,7 +42,6 @@ export default function SpotifyWidget() {
       return;
     }
 
-    const currentTrackId = currentlyPlaying.id;
     const progressMs = currentlyPlaying.progressMs || 0;
     const durationMs = currentlyPlaying.durationMs || 0;
     
@@ -58,16 +57,11 @@ export default function SpotifyWidget() {
       fetch('/api/spotify/now-playing')
         .then(res => res.ok ? res.json() : null)
         .then(data => {
-          if (data) {
-            // Only update if the track actually changed
-            if (data.id !== currentTrackId) {
-              setCurrentlyPlaying(data);
-            } else if (!data.isPlaying) {
-              // Song stopped playing
-              setCurrentlyPlaying(null);
-            }
+          if (data?.isPlaying) {
+            // Always update so the effect reschedules the next poll (same-track
+            // refreshes used to no-op and stop polling after the first timeout)
+            setCurrentlyPlaying(data);
           } else {
-            // API returned null (no song playing)
             setCurrentlyPlaying(null);
           }
         })
@@ -77,27 +71,33 @@ export default function SpotifyWidget() {
     return () => clearTimeout(timeout);
   }, [currentlyPlaying?.id, currentlyPlaying?.isPlaying, currentlyPlaying?.progressMs, currentlyPlaying?.durationMs]);
 
-  // When nothing is playing, check periodically for when music starts
+  // When nothing is playing, poll for new playback and refresh recent tracks
   useEffect(() => {
     if (currentlyPlaying?.isPlaying || document.hidden) {
-      return; // Don't check if something is already playing
+      return;
     }
 
-    // Check every 60 seconds when nothing is playing (less frequent since we're just waiting)
-    const interval = setInterval(() => {
+    const refreshIdle = () => {
       if (document.hidden) return;
-      
+
       fetch('/api/spotify/now-playing')
         .then(res => res.ok ? res.json() : null)
         .then(data => {
-          if (data && data.isPlaying) {
-            // Music started! Update the widget
+          if (data?.isPlaying) {
             setCurrentlyPlaying(data);
           }
         })
         .catch(() => {});
-    }, 60000); // Check every 60 seconds
 
+      fetch('/api/spotify/stats')
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data) setStats(data);
+        })
+        .catch(() => {});
+    };
+
+    const interval = setInterval(refreshIdle, 60_000);
     return () => clearInterval(interval);
   }, [currentlyPlaying?.isPlaying]);
 

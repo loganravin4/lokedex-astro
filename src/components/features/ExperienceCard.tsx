@@ -52,7 +52,7 @@ export default function ExperienceCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      className="bg-gradient-to-br from-poke-blue/20 to-poke-psychic/20 rounded-2xl p-6 border-4 border-poke-yellow/30 relative"
+      className="bg-gradient-to-br from-poke-blue/20 to-poke-psychic/20 rounded-2xl p-6 md:p-8 border-4 border-poke-yellow/30 relative"
     >
       {/* Company Logo - Top Right */}
       {companyLogo && (
@@ -91,7 +91,7 @@ export default function ExperienceCard({
 
       {/* Description bullets */}
       <div className="mb-5">
-        <ul className="space-y-2">
+        <ul className="space-y-3">
           {description.map((bullet, i) => (
             <li key={i} className="text-sm text-white/90 flex">
               <span className="text-poke-yellow mr-2 mt-1">▸</span>

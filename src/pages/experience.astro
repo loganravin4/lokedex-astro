@@ -29,8 +29,8 @@ const experiences = await fetchExperiences();
     </section>
 
     <!-- Experience Timeline -->
-    <section>
-      <div class="space-y-8">
+    <section class="pb-8">
+      <div class="flex flex-col gap-12">
         {experiences.map((experience, index) => (
           <ExperienceCard
             title={experience.title}
