@@ -13,3 +13,22 @@ export interface Project {
     featured: boolean;
     orderRank?: string;
   }
+
+export interface Experience {
+  _id: string;
+  title: string;
+  company: string;
+  companyWebsite?: string;
+  location: string;
+  startDate: string;
+  endDate?: string;
+  current: boolean;
+  description: string[];
+  projects?: {
+    name: string;
+    description: string;
+    techs: string[];
+    link?: string;
+    github?: string;
+  }[];
+}
