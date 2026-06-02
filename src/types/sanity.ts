@@ -11,5 +11,5 @@ export interface Project {
     github?: string;
     link?: string;
     featured: boolean;
-    order: number;
+    orderRank?: string;
   }

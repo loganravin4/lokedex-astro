@@ -1,10 +1,13 @@
 import {defineField, defineType} from 'sanity'
+import {orderRankField, orderRankOrdering} from '@sanity/orderable-document-list'
 
 export default defineType({
   name: 'experience',
   title: 'Experience',
   type: 'document',
+  orderings: [orderRankOrdering],
   fields: [
+    orderRankField({type: 'experience', newItemPosition: 'before'}),
     defineField({
       name: 'title',
       title: 'Job Title',
@@ -87,18 +90,21 @@ export default defineType({
         },
       ],
     }),
-    defineField({
-      name: 'order',
-      title: 'Display Order',
-      type: 'number',
-      description: 'Lower numbers appear first (most recent first)',
-      validation: (Rule) => Rule.required().min(0),
-    }),
   ],
   preview: {
     select: {
       title: 'title',
-      subtitle: 'company',
+      company: 'company',
+      startDate: 'startDate',
+      endDate: 'endDate',
+      current: 'current',
+    },
+    prepare({title, company, startDate, endDate, current}) {
+      const dates = current ? `${startDate} – Present` : endDate ? `${startDate} – ${endDate}` : startDate
+      return {
+        title,
+        subtitle: `${company} · ${dates}`,
+      }
     },
   },
 })

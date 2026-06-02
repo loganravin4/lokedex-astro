@@ -27,11 +27,16 @@ export interface Experience {
   current: boolean;
   description: string[];
   projects?: ExperienceProject[];
-  order: number;
+  orderRank?: string;
 }
 
 export async function fetchExperiences(): Promise<Experience[]> {
-  const query = `*[_type == "experience"] | order(order asc) {
+  const query = `*[_type == "experience"] | order(
+    coalesce(orderRank, "z"),
+    current desc,
+    coalesce(endDate, "9999-12-31") desc,
+    startDate desc
+  ) {
     _id,
     title,
     company,
@@ -43,7 +48,7 @@ export async function fetchExperiences(): Promise<Experience[]> {
     current,
     description,
     projects,
-    order
+    orderRank
   }`;
 
   return await client.fetch(query);

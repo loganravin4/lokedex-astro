@@ -2,7 +2,7 @@ import { client } from './sanity';
 import type { Project } from '../types/sanity';
 
 export async function fetchProjects(): Promise<Project[]> {
-  const query = `*[_type == "project"] | order(order asc) {
+  const query = `*[_type == "project"] | order(orderRank) {
     _id,
     name,
     slug,
@@ -13,14 +13,14 @@ export async function fetchProjects(): Promise<Project[]> {
     github,
     link,
     featured,
-    order
+    orderRank
   }`;
 
   return await client.fetch(query);
 }
 
 export async function fetchFeaturedProjects(): Promise<Project[]> {
-  const query = `*[_type == "project" && featured == true] | order(order asc) {
+  const query = `*[_type == "project" && featured == true] | order(orderRank) {
     _id,
     name,
     slug,
@@ -31,7 +31,7 @@ export async function fetchFeaturedProjects(): Promise<Project[]> {
     github,
     link,
     featured,
-    order
+    orderRank
   }`;
 
   return await client.fetch(query);

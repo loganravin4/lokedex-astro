@@ -5,7 +5,7 @@
   "main": "package.json",
   "license": "UNLICENSED",
   "scripts": {
-    "dev": "sanity dev",
+    "dev": "sanity dev --no-auto-updates",
     "start": "sanity start",
     "build": "sanity build",
     "deploy": "sanity deploy",
@@ -15,10 +15,11 @@
     "sanity"
   ],
   "dependencies": {
-    "@sanity/vision": "^5.1.0",
+    "@sanity/orderable-document-list": "^1.5.1",
+    "@sanity/vision": "^5.29.0",
     "react": "^19.1",
     "react-dom": "^19.1",
-    "sanity": "^5.1.0",
+    "sanity": "^5.29.0",
     "styled-components": "^6.1.18"
   },
   "devDependencies": {
