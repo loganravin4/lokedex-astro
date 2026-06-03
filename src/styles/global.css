@@ -161,6 +161,11 @@
   transform-origin: bottom;
 }
 
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 @theme {
   --animate-bounce-slow: bounce-slow 3s infinite;
   --animate-pulse-slow: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;

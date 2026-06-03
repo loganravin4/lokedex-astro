@@ -29,6 +29,50 @@ What changes:
 
 **Libraries:** Pick the best tool for each task as it comes. Evaluate on the go — nothing is banned except what's in the CSS and Design prohibitions in Section 13.
 
+**Animation library hierarchy — follow this order for every animated interaction:**
+1. **Motion Primitives** (https://motion-primitives.com) — copy-paste, Framer Motion based. Check here first. Mapped uses:
+   - `Tilt` — closed cover 3D mouse-tracking effect
+   - `In View` — scroll-triggered animations in list panel
+   - `Animated Group` — staggered list entry entrances
+2. **Aceternity UI** (https://ui.aceternity.com/components) — copy-paste, Framer Motion based. Mapped uses:
+   - `Encrypted Text` — boot sequence character scramble, entry title reveals
+   - `Spotlight` — screen hover glow effect
+   - `Typewriter Effect` — fallback for typing animations
+3. **React Bits** (https://reactbits.dev) — copy-paste, ships in JS/TS + CSS/Tailwind flavors. Mapped uses:
+   - `Shiny Text` — LOKÉDEX wordmark on the closed cover
+   - `Blur Text` — entry name reveal on detail panel load
+   - `Count Up` — animated number stats (Spotify minutes)
+4. **Magic UI** (https://magicui.design) — copy-paste, Framer Motion based. Use as fallback if 1-3 don't have it.
+5. **Framer Motion directly** — for panel swaps, `AnimatePresence` exit/enter sequences, spring physics on hardware buttons, the hinge fold animation.
+6. **CSS keyframes** — purely decorative only (e.g. the blink on "PRESS ANY KEY"). Never for anything responding to user input.
+
+**Sound: Tone.js synthesized audio (no audio files, no copyright risk)**
+- Install: `npm install tone`
+- All sounds are synthesized at runtime using Tone.js oscillators and envelopes — no mp3 files, no external assets.
+- This approach mirrors how the actual GBA/GB sound chip worked: simple square wave, triangle wave, and noise oscillators at specific frequencies. The Pokémon menu sounds ARE programmatic beeps. We reverse-engineer the feel without copying any files.
+- All sound logic lives in `src/hooks/useSynth.ts`. No sound code anywhere else.
+- Global mute state lives in `usePokedex` context. `useSynth` reads it and gates all playback.
+- Tone.js requires `await Tone.start()` on the first user gesture (browser autoplay policy). Call this inside the openFold handler.
+
+Sound definitions — implement these exact frequencies and durations:
+```
+navigate:      880Hz square wave, 40ms, gain 0.25, fast exponential decay
+select:        523Hz → 784Hz square wave, 30ms each note, gain 0.3
+back:          523Hz → 392Hz square wave, 30ms each note, gain 0.3
+sectionSwitch: 440Hz → 554Hz → 659Hz square wave, 25ms each note, gain 0.28
+openFold:      80Hz sine wave 150ms fast decay + white noise burst 80ms, gain 0.2
+boot:          C4→E4→G4→C5 (262→330→392→523Hz) square wave, 80ms per note,
+               20ms gap between notes, gain 0.3
+```
+
+- Sounds mapped to interactions:
+  - `navigate` — D-pad up/down, list row changes
+  - `select` — D-pad right, A button, list item click
+  - `back` — D-pad left, B button
+  - `sectionSwitch` — section button click
+  - `boot` — plays during boot sequence, one note per progress stage
+  - `openFold` — fires on device open, triggers Tone.start()
+
 ---
 
 ## 2. Project Structure
@@ -65,8 +109,7 @@ src/
     usePokedex.ts          — central state: activeSection, selectedEntry, isOpen
     useSanityData.ts       — fetches projects + experiences from Sanity
     useDPad.ts             — keyboard arrow key bindings
-    useSound.ts            — sound effect playback
-  sounds/                  — see Section 9
+    useSynth.ts            — all synthesized sound effects via Tone.js
   styles/
     global.css             — all CSS tokens (extend existing, do not replace)
     hardware.css           — all hardware-specific CSS (shadows, press states, plastic)
@@ -697,7 +740,7 @@ The following are banned. Claude Code must not produce these under any circumsta
 - `shadow-sm`, `shadow`, `shadow-md`, `shadow-lg`, `shadow-xl`, `shadow-2xl` — write shadows manually
 - `rounded-xl`, `rounded-2xl`, `rounded-3xl` — use specific `border-radius` values
 - `bg-red-*`, `bg-blue-*`, `bg-yellow-*`, or any Tailwind color — use CSS variables
-- `gradient` on anything except the shell plastic (Section 6.1)
+- `gradient` on anything except the shell plastic (Section 6.1) and text-clipped gradients (`WebkitBackgroundClip: 'text'`) used by ShinyText — decorative background gradients are banned
 - `backdrop-blur`, `bg-opacity`, `glassmorphism` patterns
 - `animate-pulse`, `animate-bounce` Tailwind utilities — write custom keyframes
 - `transition-all` — specify exact properties
