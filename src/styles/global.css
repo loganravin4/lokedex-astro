@@ -109,6 +109,14 @@
   --btn-action-size: 34px;
   --btn-section-height: 24px;
   --btn-section-width: 52px;
+
+  /* --- Hardware detail colors (page bg + sensor eye) ---
+     Values specified directly by build tasks; stored here so no hex
+     is hardcoded in component files (Section 4). */
+  --page-bg: #0d0d0d;
+  --sensor-eye-housing: #111111;
+  --sensor-eye-ring: #222222;
+  --sensor-eye-lens: #4488FF;
 }
 
 @keyframes bounce-slow {
