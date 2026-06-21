@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { AnimationState } from '../../types/pokedex';
 import ClosedCover from './ClosedCover';
 import HingeAnimation from './HingeAnimation';
+import BootSequence from './BootSequence';
 import LeftHalf from './LeftHalf';
 import Hinge from './Hinge';
 import RightHalf from './RightHalf';
@@ -31,7 +32,18 @@ export default function PokedexShell() {
 
       {(animationState === 'booting' || animationState === 'ready') && (
         <div className="pokedex-shell w-[var(--device-width)] h-[var(--device-height)] flex flex-row items-stretch">
-          <LeftHalf />
+          <LeftHalf
+            listContent={
+              animationState === 'booting' ? (
+                // TODO(Task 9): isMuted hardcoded false until usePokedex wires
+                // in real mute state.
+                <BootSequence
+                  onComplete={() => setAnimationState('ready')}
+                  isMuted={false}
+                />
+              ) : undefined
+            }
+          />
           <Hinge />
           <RightHalf />
         </div>

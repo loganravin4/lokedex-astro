@@ -84,10 +84,13 @@ export function useSynth(isMuted: boolean) {
         if (Tone) sequence(Tone, [440, 554, 659], 25, 0.28);
       },
 
-      // C4->E4->G4->C5 (262->330->392->523Hz) square, 80ms/note, 20ms gap, gain 0.3
-      boot: () => {
+      // One note of the boot arpeggio by index — C4/E4/G4/C5
+      // (262/330/392/523Hz) square, 80ms, gain 0.3. Fired once per progress
+      // segment as the boot sequence fills its bar (Section 1 / Section 9).
+      bootNote: (index: number) => {
         const Tone = ready();
-        if (Tone) sequence(Tone, [262, 330, 392, 523], 80, 0.3, 20);
+        const freq = [262, 330, 392, 523][index];
+        if (Tone && freq) blip(Tone, freq, 0.08, 0.3, Tone.now());
       },
 
       // 80Hz sine 150ms fast decay + white-noise burst 80ms, gain 0.2.

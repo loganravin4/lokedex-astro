@@ -772,7 +772,8 @@ Tailwind utility classes are the default for all layout, spacing, sizing, flex, 
 Everything else is a Tailwind class. Examples:
 - `style={{ display: 'flex', flexDirection: 'column' }}` → `className="flex flex-col"` ✓
 - `style={{ position: 'absolute', top: '14px', left: '14px' }}` → `className="absolute top-[14px] left-[14px]"` ✓
-- `style={{ color: 'var(--detail-muted)' }}` → `className="text-[var(--detail-muted)]"` ✓
+- `style={{ color: 'var(--detail-muted)' }}` → `className="text-[color:var(--detail-muted)]"` ✓
+- `style={{ fontSize: 'var(--text-hw-xs)' }}` → `className="text-[length:var(--text-hw-xs)]"` ✓
 - `style={{ background: 'var(--shell-red)' }}` → `className="bg-[var(--shell-red)]"` ✓
 - `style={{ transform: computedTransform }}` → `style={{ transform: computedTransform }}` ✓ (dynamic)
 

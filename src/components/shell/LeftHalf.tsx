@@ -1,10 +1,17 @@
+import type { ReactNode } from 'react';
 import ScreenBezel from './ScreenBezel';
+
+interface LeftHalfProps {
+  // Content for the LIST screen — BootSequence during 'booting', ListPanel
+  // later (Task 13), nothing during 'ready' for now.
+  listContent?: ReactNode;
+}
 
 // Left half of the device housing. Holds the list screen + section
 // controls (placeholders for now) and the sensor eye detail.
 // box-sizing: content-box so width (--panel-width) + padding fills the
 // shell exactly per the --panel-width formula in Section 4.
-export default function LeftHalf() {
+export default function LeftHalf({ listContent }: LeftHalfProps) {
   return (
     <div className="shell-left relative box-content w-[var(--panel-width)] rounded-[18px_0_0_18px] flex flex-col p-[var(--shell-padding)]">
       {/* Sensor eye — top-left detail */}
@@ -13,7 +20,7 @@ export default function LeftHalf() {
       </div>
 
       {/* List screen */}
-      <ScreenBezel label="LIST" />
+      <ScreenBezel label="LIST">{listContent}</ScreenBezel>
 
       {/* Control area placeholder */}
       <div className="h-[var(--control-area-height)] bg-[var(--shell-red-dark)] rounded-[8px] mt-4" />
