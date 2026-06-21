@@ -4,6 +4,30 @@
 
 ---
 
+## 0. Task Completion Protocol
+
+Every Claude Code task response must end with the following, in this order:
+
+**Summary** — bullet list of everything created or modified, with one sentence on each decision worth noting.
+
+**Decisions worth your review** — flag any ambiguity, spec conflict, or implementation choice that deviated from the task prompt. Be explicit. Do not bury these.
+
+**Verification** — confirm tsc --noEmit clean and npm run build passes. List any browser checks performed.
+
+**Draft commit message** — always included, formatted as a conventional commit. Subject line under 72 characters. Body lists the concrete file-level changes. Footer notes any open issues or flags. Format:
+
+```
+<type>(<scope>): <subject>
+
+<body — what changed and why, file by file>
+
+<footer — open issues, flags, follow-ups>
+```
+
+Types: feat, fix, refactor, chore, style. Scope is the component or system touched (e.g. shell, synth, data, types).
+
+---
+
 ## 1. Framework Decision
 
 **Migrate from Astro to Vite + React (SPA).**
