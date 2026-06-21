@@ -1,3 +1,5 @@
+import ScreenBezel from './ScreenBezel';
+
 // Right half of the device housing. Holds the detail screen + d-pad /
 // action controls (placeholders for now) and the speaker grille.
 // box-sizing: content-box so width (--panel-width) + padding fills the
@@ -19,14 +21,8 @@ export default function RightHalf() {
         padding: 'var(--shell-padding)',
       }}
     >
-      {/* Screen placeholder */}
-      <div
-        style={{
-          flex: 1,
-          background: 'var(--screen-bezel)',
-          borderRadius: '8px',
-        }}
-      />
+      {/* Detail screen */}
+      <ScreenBezel label="DATA" />
 
       {/* Control area placeholder */}
       <div

@@ -1,3 +1,5 @@
+import ScreenBezel from './ScreenBezel';
+
 // Left half of the device housing. Holds the list screen + section
 // controls (placeholders for now) and the sensor eye detail.
 // box-sizing: content-box so width (--panel-width) + padding fills the
@@ -43,14 +45,8 @@ export default function LeftHalf() {
         />
       </div>
 
-      {/* Screen placeholder */}
-      <div
-        style={{
-          flex: 1,
-          background: 'var(--screen-bezel)',
-          borderRadius: '8px',
-        }}
-      />
+      {/* List screen */}
+      <ScreenBezel label="LIST" />
 
       {/* Control area placeholder */}
       <div
