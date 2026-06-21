@@ -9,42 +9,15 @@ export default function RightHalf() {
   const dots = Array.from({ length: 12 });
 
   return (
-    <div
-      style={{
-        position: 'relative',
-        boxSizing: 'content-box',
-        width: 'var(--panel-width)',
-        background: 'var(--shell-red)',
-        borderRadius: '0 18px 18px 0',
-        display: 'flex',
-        flexDirection: 'column',
-        padding: 'var(--shell-padding)',
-      }}
-    >
+    <div className="relative box-content w-[var(--panel-width)] bg-[var(--shell-red)] rounded-[0_18px_18px_0] flex flex-col p-[var(--shell-padding)]">
       {/* Detail screen */}
       <ScreenBezel label="DATA" />
 
       {/* Control area placeholder */}
-      <div
-        style={{
-          height: 'var(--control-area-height)',
-          background: 'var(--shell-red-dark)',
-          borderRadius: '8px',
-          marginTop: '16px',
-        }}
-      />
+      <div className="h-[var(--control-area-height)] bg-[var(--shell-red-dark)] rounded-[8px] mt-4" />
 
       {/* Speaker grille — bottom-right detail */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '20px',
-          right: '20px',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 5px)',
-          gap: '5px',
-        }}
-      >
+      <div className="absolute bottom-[20px] right-[20px] grid grid-cols-[repeat(4,5px)] gap-[5px]">
         {dots.map((_, i) => (
           <div key={i} className="speaker-dot" />
         ))}

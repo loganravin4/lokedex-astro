@@ -15,24 +15,14 @@ interface HingeAnimationProps {
 // This uses Framer Motion directly per the animation hierarchy (Section 1,
 // item 5: the hinge fold is explicitly a Framer-Motion-direct interaction).
 export default function HingeAnimation({ onComplete }: HingeAnimationProps) {
+  // Perspective on the parent (not the rotating child) gives a shared
+  // vanishing point at perspective-origin 50% 50% — the hinge line the right
+  // half pivots on — for a more realistic clamshell fold.
   return (
-    <div
-      className="pokedex-shell"
-      style={{
-        width: 'var(--device-width)',
-        height: 'var(--device-height)',
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'stretch',
-        // Perspective on the parent (not the rotating child) gives a shared
-        // vanishing point at perspective-origin 50% 50% — the hinge line the
-        // right half pivots on — for a more realistic clamshell fold.
-        perspective: 1200,
-      }}
-    >
+    <div className="pokedex-shell w-[var(--device-width)] h-[var(--device-height)] flex flex-row items-stretch perspective-[1200px]">
       {/* Left half — fades in over 200ms (Section 9) */}
       <motion.div
-        style={{ display: 'flex' }}
+        className="flex"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.2 }}
@@ -44,12 +34,12 @@ export default function HingeAnimation({ onComplete }: HingeAnimationProps) {
       <Hinge />
 
       {/* Right half — swings in from -90deg around its left edge. onComplete
-          is driven off the rotateY leg (the slower of the two). */}
+          is driven off the rotateY leg (the slower of the two).
+          transformOrigin stays in style — Framer animates the transform it
+          pairs with (Section 13 inline-style exception 1). */}
       <motion.div
-        style={{
-          display: 'flex',
-          transformOrigin: 'left center',
-        }}
+        className="flex"
+        style={{ transformOrigin: 'left center' }}
         initial={{ rotateY: -90, opacity: 0 }}
         animate={{ rotateY: 0, opacity: 1 }}
         transition={{

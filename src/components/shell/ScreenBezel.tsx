@@ -12,38 +12,17 @@ interface ScreenBezelProps {
 // (9) and scanlines (10). A small pixel label sits below the bezel.
 export default function ScreenBezel({ children, label }: ScreenBezelProps) {
   return (
-    <div
-      className="screen-bezel"
-      style={{
-        flex: 1,
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <div
-        className="screen-glass"
-        style={{
-          flex: 1,
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
+    <div className="screen-bezel flex-1 relative flex flex-col">
+      <div className="screen-glass flex-1 relative overflow-hidden">
         {/* Content layer — above the glass background, below glow + scanlines */}
-        <div style={{ position: 'relative', zIndex: 1, height: '100%' }}>
-          {children}
-        </div>
+        <div className="relative z-[1] h-full">{children}</div>
       </div>
 
+      {/* font-family kept in style — a CSS-var font ref is unwieldy as an
+          arbitrary Tailwind class (Section 13 inline-style exception 3). */}
       <div
-        style={{
-          fontFamily: 'var(--font-family-pokemon)',
-          fontSize: 'var(--text-hw-xs)',
-          color: 'var(--detail-muted)',
-          marginTop: '6px',
-          textAlign: 'center',
-          letterSpacing: '0.05em',
-        }}
+        className="text-[length:var(--text-hw-xs)] text-[color:var(--detail-muted)] mt-[6px] text-center tracking-[0.05em]"
+        style={{ fontFamily: 'var(--font-family-pokemon)' }}
       >
         {label}
       </div>

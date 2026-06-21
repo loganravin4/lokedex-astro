@@ -38,56 +38,35 @@ export default function ClosedCover({ onOpen, isMuted }: ClosedCoverProps) {
   return (
     <Tilt rotationFactor={8} springOptions={{ stiffness: 120, damping: 20 }}>
       <div
-        className="pokedex-shell"
+        className="pokedex-shell relative w-[var(--device-width)] h-[var(--device-height)] rounded-[18px] flex flex-col items-center justify-center cursor-pointer"
         onClick={() => void handleOpen()}
-        style={{
-          position: 'relative',
-          width: 'var(--device-width)',
-          height: 'var(--device-height)',
-          borderRadius: '18px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-        }}
       >
         {/* Indicator light — steady green glow, top-left */}
-        <div
-          className="indicator-light"
-          style={{ position: 'absolute', top: '20px', left: '20px' }}
-        />
+        <div className="indicator-light absolute top-[20px] left-[20px]" />
 
-        {/* Wordmark — shiny sweep over poke-yellow */}
+        {/* Wordmark — shiny sweep over poke-yellow.
+            font-family kept in style (Section 13 inline-style exception 3). */}
         <div
-          style={{
-            fontFamily: 'var(--font-family-pokemon)',
-            fontSize: '20px',
-            letterSpacing: '0.1em',
-          }}
+          className="text-[20px] tracking-[0.1em]"
+          style={{ fontFamily: 'var(--font-family-pokemon)' }}
         >
           <ShinyText text="LOKÉDEX" color="var(--color-poke-yellow)" />
         </div>
 
         {/* Subtitle */}
         <div
-          style={{
-            fontFamily: 'var(--font-family-pokemon)',
-            fontSize: '8px',
-            color: 'var(--detail-muted)',
-            marginTop: '12px',
-          }}
+          className="text-[8px] text-[color:var(--detail-muted)] mt-3"
+          style={{ fontFamily: 'var(--font-family-pokemon)' }}
         >
           TRAINER PORTFOLIO
         </div>
 
-        {/* Blinking prompt */}
+        {/* Blinking prompt — animation kept in style (custom keyframe, not
+            expressible as a Tailwind class per spec). */}
         <div
+          className="text-[8px] text-[color:var(--detail-muted)] mt-12"
           style={{
             fontFamily: 'var(--font-family-pokemon)',
-            fontSize: '8px',
-            color: 'var(--detail-muted)',
-            marginTop: '48px',
             animation: 'blink 1s step-end infinite',
           }}
         >

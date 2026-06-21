@@ -642,8 +642,9 @@ Section buttons sit below the left screen inside the left half shell. D-pad and 
 ### Opening fold
 - Duration: 600ms
 - Easing: `cubic-bezier(0.25, 0.46, 0.45, 0.94)`
-- Property: `transform: perspective(1200px) rotateY(-90deg)` → `rotateY(0deg)` on right half
-- `transform-origin: left center`
+- `perspective: 1200` on the parent container (not the rotating child) — shared vanishing point at the hinge axis produces a more realistic clamshell fold
+- `transform: rotateY(-90deg)` → `rotateY(0deg)` on right half motion.div
+- `transform-origin: left center` on the right half
 - Simultaneous: left half fades in `opacity: 0 → 1` over 200ms
 
 ### Boot sequence
@@ -760,10 +761,25 @@ Data is fetched once on app mount via `useSanityData`. No per-entry fetches. All
 
 The following are banned. Claude Code must not produce these under any circumstances, regardless of convenience.
 
+**Tailwind usage — read this carefully**
+
+Tailwind utility classes are the default for all layout, spacing, sizing, flex, position, border-radius, cursor, and transition properties. Do not use inline `style={{}}` for static values that Tailwind can express. Three valid uses of `style={{}}`:
+
+1. Runtime-dynamic values computed from JS state (e.g. scroll position, animation progress)
+2. CSS variables used as values where Tailwind arbitrary syntax is too verbose: `style={{ fontFamily: 'var(--font-family-pokemon)' }}` is acceptable if the equivalent Tailwind class would be unwieldy
+3. Properties Tailwind cannot express at all
+
+Everything else is a Tailwind class. Examples:
+- `style={{ display: 'flex', flexDirection: 'column' }}` → `className="flex flex-col"` ✓
+- `style={{ position: 'absolute', top: '14px', left: '14px' }}` → `className="absolute top-[14px] left-[14px]"` ✓
+- `style={{ color: 'var(--detail-muted)' }}` → `className="text-[var(--detail-muted)]"` ✓
+- `style={{ background: 'var(--shell-red)' }}` → `className="bg-[var(--shell-red)]"` ✓
+- `style={{ transform: computedTransform }}` → `style={{ transform: computedTransform }}` ✓ (dynamic)
+
 **CSS**
 - `shadow-sm`, `shadow`, `shadow-md`, `shadow-lg`, `shadow-xl`, `shadow-2xl` — write shadows manually
 - `rounded-xl`, `rounded-2xl`, `rounded-3xl` — use specific `border-radius` values
-- `bg-red-*`, `bg-blue-*`, `bg-yellow-*`, or any Tailwind color — use CSS variables
+- `bg-red-*`, `bg-blue-*`, `bg-yellow-*`, or any Tailwind color — use CSS variables via arbitrary values: `bg-[var(--shell-red)]`
 - `gradient` on anything except the shell plastic (Section 6.1) and text-clipped gradients (`WebkitBackgroundClip: 'text'`) used by ShinyText — decorative background gradients are banned
 - `backdrop-blur`, `bg-opacity`, `glassmorphism` patterns
 - `animate-pulse`, `animate-bounce` Tailwind utilities — write custom keyframes

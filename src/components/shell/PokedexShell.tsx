@@ -18,16 +18,7 @@ export default function PokedexShell() {
   const [animationState, setAnimationState] = useState<AnimationState>('closed');
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'var(--page-bg)',
-      }}
-    >
+    <div className="fixed inset-0 flex items-center justify-center bg-[var(--page-bg)]">
       {animationState === 'closed' && (
         // TODO(Task 9): replace hardcoded isMuted={false} with real mute state
         // from usePokedex context once it's wired in.
@@ -39,16 +30,7 @@ export default function PokedexShell() {
       )}
 
       {(animationState === 'booting' || animationState === 'ready') && (
-        <div
-          className="pokedex-shell"
-          style={{
-            width: 'var(--device-width)',
-            height: 'var(--device-height)',
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'stretch',
-          }}
-        >
+        <div className="pokedex-shell w-[var(--device-width)] h-[var(--device-height)] flex flex-row items-stretch">
           <LeftHalf />
           <Hinge />
           <RightHalf />
