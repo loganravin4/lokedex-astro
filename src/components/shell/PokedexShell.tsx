@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import type { AnimationState } from '../../types/pokedex';
 import { usePokedex } from '../../hooks/usePokedex';
+import { useSanityData } from '../../hooks/useSanityData';
+import { buildEntries } from '../../lib/buildEntries';
 import ClosedCover from './ClosedCover';
 import HingeAnimation from './HingeAnimation';
 import BootSequence from './BootSequence';
 import LeftHalf from './LeftHalf';
 import Hinge from './Hinge';
 import RightHalf from './RightHalf';
+import ListPanel from '../screens/ListPanel';
 
 // Outer plastic housing. Centers the device on the dark backdrop and renders
 // one of the four animationState views (Section 7 / Section 8):
@@ -21,7 +24,17 @@ import RightHalf from './RightHalf';
 // content state that lives in usePokedex.
 export default function PokedexShell() {
   const [animationState, setAnimationState] = useState<AnimationState>('closed');
-  const { isMuted, toggleMute } = usePokedex();
+  const { isMuted, toggleMute, activeSection } = usePokedex();
+
+  // Single Sanity fetch for the whole app, intentionally hoisted here.
+  // Section 12 mandates the data is "fetched once on mount" — do NOT move this
+  // into ListPanel/RightHalf as a per-component useSanityData call. Both the
+  // list (ListPanel) and the hardware selection (RightHalf) must index into the
+  // SAME entries array for focusedIndex to line up, and two callers would mean
+  // two fetches. The fetch kicks off while the cover is still closed, so data
+  // is ready by the time the boot sequence finishes.
+  const { projects, experiences, loading, error } = useSanityData();
+  const entries = buildEntries(activeSection, projects, experiences);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-[var(--page-bg)]">
@@ -43,13 +56,15 @@ export default function PokedexShell() {
                     onComplete={() => setAnimationState('ready')}
                     isMuted={isMuted}
                   />
-                ) : undefined
+                ) : (
+                  <ListPanel entries={entries} loading={loading} error={error} />
+                )
               }
             />
             <Hinge />
             {/* isReady gates D-pad input so arrow keys / arm clicks during the
                 boot sequence don't move the (not-yet-visible) list cursor. */}
-            <RightHalf isReady={animationState === 'ready'} />
+            <RightHalf isReady={animationState === 'ready'} entries={entries} />
           </div>
         )}
 

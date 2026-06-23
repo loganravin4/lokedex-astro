@@ -5,7 +5,7 @@ import SensorEye from './SensorEye';
 
 interface LeftHalfProps {
   // Content for the LIST screen — BootSequence during 'booting', ListPanel
-  // later (Task 13), nothing during 'ready' for now.
+  // during 'ready'. Supplied by PokedexShell.
   listContent?: ReactNode;
 }
 

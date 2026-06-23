@@ -166,6 +166,16 @@
   50% { opacity: 0; }
 }
 
+/* Hidden scrollbar for in-screen scroll regions (Section 7 ListPanel).
+   The WebKit rule is added alongside scrollbar-width so the scrollbar is
+   actually hidden in Chrome/Safari, not just Firefox. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @theme {
   --animate-bounce-slow: bounce-slow 3s infinite;
   --animate-pulse-slow: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
