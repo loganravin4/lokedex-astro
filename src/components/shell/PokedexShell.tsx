@@ -47,7 +47,9 @@ export default function PokedexShell() {
               }
             />
             <Hinge />
-            <RightHalf />
+            {/* isReady gates D-pad input so arrow keys / arm clicks during the
+                boot sequence don't move the (not-yet-visible) list cursor. */}
+            <RightHalf isReady={animationState === 'ready'} />
           </div>
         )}
 

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import ScreenBezel from './ScreenBezel';
+import SectionButtons from './SectionButtons';
 
 interface LeftHalfProps {
   // Content for the LIST screen — BootSequence during 'booting', ListPanel
@@ -22,8 +23,10 @@ export default function LeftHalf({ listContent }: LeftHalfProps) {
       {/* List screen */}
       <ScreenBezel label="LIST">{listContent}</ScreenBezel>
 
-      {/* Control area placeholder */}
-      <div className="h-[var(--control-area-height)] bg-[var(--shell-red-dark)] rounded-[8px] mt-4" />
+      {/* Section switcher controls */}
+      <div className="flex items-center justify-center h-[var(--control-area-height)]">
+        <SectionButtons />
+      </div>
     </div>
   );
 }

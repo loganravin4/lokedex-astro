@@ -48,7 +48,8 @@ export default function HingeAnimation({ onComplete }: HingeAnimationProps) {
         }}
         onAnimationComplete={onComplete}
       >
-        <RightHalf />
+        {/* Fold in progress — input is inert until the boot sequence finishes. */}
+        <RightHalf isReady={false} />
       </motion.div>
     </div>
   );

@@ -675,21 +675,9 @@ Section buttons sit below the left screen inside the left half shell. D-pad and 
 
 ## 10. Sound Design
 
-All sounds use the Web Audio API via a `useSound` hook. No external audio library. No mp3 files — sounds are synthesized via `AudioContext` oscillators to keep the bundle small and maintain the retro feel.
+> The full sound spec has moved to Section 1 (Tone.js synthesized audio). This section is preserved only for the localStorage key reference.
 
-```ts
-// useSound.ts — all sounds defined here, nowhere else
-sounds = {
-  navigate: short blip, 880Hz square wave, 40ms, gain 0.3
-  select:   confirmation blip, 523Hz → 659Hz, 80ms, gain 0.35
-  back:     descending blip, 440Hz → 330Hz, 60ms, gain 0.3
-  sectionSwitch: two-tone, 392Hz + 523Hz, 100ms, gain 0.3
-  boot:     ascending arpeggio C4→E4→G4→C5, 80ms per note
-  openFold: low mechanical click, noise burst, 200ms, gain 0.2
-}
-```
-
-Global mute toggle: a small speaker icon on the shell (top-right of device). State persisted in `localStorage` as `lokédex-muted`. Default: unmuted.
+Global mute toggle: a small speaker icon on the shell (top-right of device). State persisted in `localStorage` as `lokedex-muted` (no accent — avoids encoding edge cases). Default: unmuted.
 
 ---
 
