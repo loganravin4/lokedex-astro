@@ -1,5 +1,10 @@
 import PokedexShell from './components/shell/PokedexShell';
+import { PokedexProvider } from './hooks/usePokedex';
 
 export default function App() {
-  return <PokedexShell />;
+  return (
+    <PokedexProvider>
+      <PokedexShell />
+    </PokedexProvider>
+  );
 }
