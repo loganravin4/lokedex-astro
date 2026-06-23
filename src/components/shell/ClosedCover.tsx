@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Tilt } from '../ui/Tilt';
 import ShinyText from '../ui/ShinyText';
+import IndicatorLight from './IndicatorLight';
 import { useSynth } from '../../hooks/useSynth';
 
 interface ClosedCoverProps {
@@ -41,8 +42,11 @@ export default function ClosedCover({ onOpen, isMuted }: ClosedCoverProps) {
         className="pokedex-shell relative w-[var(--device-width)] h-[var(--device-height)] rounded-[18px] flex flex-col items-center justify-center cursor-pointer"
         onClick={() => void handleOpen()}
       >
-        {/* Indicator light — steady green glow, top-left */}
-        <div className="indicator-light absolute top-[20px] left-[20px]" />
+        {/* Indicator light — steady green glow, top-left.
+            Positioning stays here; IndicatorLight renders just the circle. */}
+        <div className="absolute top-[20px] left-[20px]">
+          <IndicatorLight on={true} />
+        </div>
 
         {/* Wordmark — shiny sweep over poke-yellow.
             font-family kept in style (Section 13 inline-style exception 3). */}

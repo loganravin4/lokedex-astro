@@ -1,6 +1,7 @@
 import ScreenBezel from './ScreenBezel';
 import DPad from './DPad';
 import ActionButtons from './ActionButtons';
+import SpeakerGrille from './SpeakerGrille';
 import { usePokedex } from '../../hooks/usePokedex';
 
 interface RightHalfProps {
@@ -14,9 +15,6 @@ interface RightHalfProps {
 // box-sizing: content-box so width (--panel-width) + padding fills the
 // shell exactly per the --panel-width formula in Section 4.
 export default function RightHalf({ isReady }: RightHalfProps) {
-  // 4 columns × 3 rows of speaker dots (Section 6.8).
-  const dots = Array.from({ length: 12 });
-
   const { focusedIndex, setFocusedIndex, setSelectedEntry } = usePokedex();
 
   return (
@@ -47,11 +45,7 @@ export default function RightHalf({ isReady }: RightHalfProps) {
       </div>
 
       {/* Speaker grille — bottom-right detail */}
-      <div className="absolute bottom-[20px] right-[20px] grid grid-cols-[repeat(4,5px)] gap-[5px]">
-        {dots.map((_, i) => (
-          <div key={i} className="speaker-dot" />
-        ))}
-      </div>
+      <SpeakerGrille />
     </div>
   );
 }
