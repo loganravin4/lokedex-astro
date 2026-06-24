@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import ScreenBezel from './ScreenBezel';
 import DPad from './DPad';
 import ActionButtons from './ActionButtons';
@@ -13,13 +14,16 @@ interface RightHalfProps {
   // resolves to the same entry. Defaults to [] for the pre-'ready' renders
   // (HingeAnimation) where input is gated anyway.
   entries?: ListEntry[];
+  // The detail screen content (<DetailPanel />), passed from PokedexShell so the
+  // single Sanity fetch stays hoisted there. Absent during the boot render.
+  detailContent?: ReactNode;
 }
 
 // Right half of the device housing. Holds the detail screen + d-pad /
 // action controls and the speaker grille.
 // box-sizing: content-box so width (--panel-width) + padding fills the
 // shell exactly per the --panel-width formula in Section 4.
-export default function RightHalf({ isReady, entries = [] }: RightHalfProps) {
+export default function RightHalf({ isReady, entries = [], detailContent }: RightHalfProps) {
   const { focusedIndex, setFocusedIndex, setSelectedEntry } = usePokedex();
 
   // Clamp downward navigation to the last entry (Task 10 TODO, now resolved).
@@ -33,7 +37,7 @@ export default function RightHalf({ isReady, entries = [] }: RightHalfProps) {
   return (
     <div className="relative box-content w-[var(--panel-width)] bg-[var(--shell-red)] rounded-[0_18px_18px_0] flex flex-col p-[var(--shell-padding)]">
       {/* Detail screen */}
-      <ScreenBezel label="DATA" />
+      <ScreenBezel label="DATA">{detailContent}</ScreenBezel>
 
       {/* D-pad (left) + action buttons (right) — Section 8 layout */}
       <div className="flex items-center justify-between h-[var(--control-area-height)] px-4">

@@ -591,8 +591,9 @@ Renders a job. Layout:
 ### AboutEntry
 Static content. Tells the Logan story as a Pokédex entry. Format:
 - `TRAINER:` Logan Ravinuthala
-- `CLASS:` Computer Engineer
-- `HOMETOWN:` Boston, MA
+- `CLASS:` Computer Engineering & Computer Science
+- `SCHOOL:` Northeastern University
+- `GPA:` 3.9
 - Then 2-3 short paragraph entries in body text style
 - Interests as type badges (Weightlifting, Music, Mario Kart, Pokémon)
 - Links to GitHub, LinkedIn
