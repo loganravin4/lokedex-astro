@@ -1,252 +1,138 @@
 import { useEffect, useState } from 'react';
-import type { SpotifyTrack, SpotifyStats } from '../../lib/spotify';
+import type { SpotifyTrack } from '../../lib/spotify';
+
+// Compact now-playing readout for the trainer card (DATA screen). Hardware
+// aesthetic: JetBrains Mono content, a Press Start 2P pixel label, colors from
+// CSS variables only, no white backgrounds. Intentionally lightweight — no
+// framer-motion (and so no ShinyText, which depends on it); the "now playing"
+// state is animated with the CSS `equalizer` keyframe (global.css). Shows the
+// track name + artist while playing, or NOT PLAYING otherwise.
+
+const NOW_PLAYING_ENDPOINT = '/api/spotify/now-playing';
+const BAR_COUNT = 4;
+
+// Returns the normalized track, or null on anything that isn't active playback
+// (the serverless function already returns 200 + null for all failure modes).
+function fetchNowPlaying(): Promise<SpotifyTrack | null> {
+  return fetch(NOW_PLAYING_ENDPOINT)
+    .then((res) => (res.ok ? res.json() : null))
+    .catch(() => null);
+}
+
+// CSS equalizer — BAR_COUNT bars. Animating (per-bar height + stagger) while
+// playing, flat and short when idle. Animation lives in inline style because a
+// custom keyframe with per-bar timing isn't expressible as a Tailwind class —
+// the same exception the codebase uses for the `blink` cursor (Section 13).
+function Equalizer({ playing }: { playing: boolean }) {
+  return (
+    <div className="flex h-[12px] items-end gap-[2px]" aria-hidden="true">
+      {Array.from({ length: BAR_COUNT }).map((_, i) => (
+        <span
+          key={i}
+          className="equalizer-bar w-[3px] bg-[var(--color-poke-grass)]"
+          style={
+            playing
+              ? {
+                  height: '100%',
+                  animation: `equalizer ${0.6 + i * 0.15}s ease-in-out infinite`,
+                  animationDelay: `${i * 0.1}s`,
+                }
+              : { height: '30%' }
+          }
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function SpotifyWidget() {
-  const [currentlyPlaying, setCurrentlyPlaying] = useState<SpotifyTrack | null>(null);
-  const [stats, setStats] = useState<SpotifyStats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [track, setTrack] = useState<SpotifyTrack | null>(null);
 
+  // Initial fetch on mount.
   useEffect(() => {
-    async function fetchSpotifyData() {
-      try {
-        setLoading(true);
-        // Try to get currently playing first
-        const playing = await fetch('/api/spotify/now-playing').then(res => 
-          res.ok ? res.json() : null
-        ).catch(() => null);
-        
-        setCurrentlyPlaying(playing);
-
-        // Get stats
-        const statsData = await fetch('/api/spotify/stats').then(res =>
-          res.ok ? res.json() : null
-        ).catch(() => null);
-        
-        setStats(statsData);
-        setError(false);
-      } catch (err) {
-        console.error('Error fetching Spotify data:', err);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchSpotifyData();
-  }, []); // Only run once on mount
-
-  // Smart refresh: only update when song changes or when current song should end
-  useEffect(() => {
-    if (!currentlyPlaying?.isPlaying || document.hidden) {
-      return;
-    }
-
-    const progressMs = currentlyPlaying.progressMs || 0;
-    const durationMs = currentlyPlaying.durationMs || 0;
-    
-    // Calculate when to refresh:
-    // 1. When the current song should end (duration - progress + small buffer)
-    // 2. Or check every 30 seconds as a fallback to catch song changes
-    const timeRemaining = durationMs > 0 ? durationMs - progressMs : 30000;
-    const refreshDelay = Math.min(timeRemaining + 2000, 30000); // Add 2s buffer, max 30s
-
-    const timeout = setTimeout(() => {
-      if (document.hidden) return;
-      
-      fetch('/api/spotify/now-playing')
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          if (data?.isPlaying) {
-            // Always update so the effect reschedules the next poll (same-track
-            // refreshes used to no-op and stop polling after the first timeout)
-            setCurrentlyPlaying(data);
-          } else {
-            setCurrentlyPlaying(null);
-          }
-        })
-        .catch(() => {});
-    }, refreshDelay);
-
-    return () => clearTimeout(timeout);
-  }, [currentlyPlaying?.id, currentlyPlaying?.isPlaying, currentlyPlaying?.progressMs, currentlyPlaying?.durationMs]);
-
-  // When nothing is playing, poll for new playback and refresh recent tracks
-  useEffect(() => {
-    if (currentlyPlaying?.isPlaying || document.hidden) {
-      return;
-    }
-
-    const refreshIdle = () => {
-      if (document.hidden) return;
-
-      fetch('/api/spotify/now-playing')
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          if (data?.isPlaying) {
-            setCurrentlyPlaying(data);
-          }
-        })
-        .catch(() => {});
-
-      fetch('/api/spotify/stats')
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          if (data) setStats(data);
-        })
-        .catch(() => {});
+    let active = true;
+    fetchNowPlaying().then((t) => {
+      if (active) setTrack(t);
+    });
+    return () => {
+      active = false;
     };
+  }, []);
 
-    const interval = setInterval(refreshIdle, 60_000);
-    return () => clearInterval(interval);
-  }, [currentlyPlaying?.isPlaying]);
+  const isPlaying = !!track?.isPlaying;
 
-  if (loading) {
-    return (
-      <div className="bg-gradient-to-r from-poke-grass/20 to-poke-electric/20 rounded-2xl p-4 md:p-6 border-4 border-poke-grass/40">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-poke-grass/20 rounded-lg animate-pulse"></div>
-          <div className="flex-1">
-            <div className="h-4 bg-poke-grass/20 rounded w-24 sm:w-32 mb-2 animate-pulse"></div>
-            <div className="h-3 bg-poke-grass/20 rounded w-20 sm:w-24 animate-pulse"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // The two polling effects below are mutually exclusive, NOT racing — only one
+  // timer is ever live at a time, for two reasons:
+  //   1. Both branch on the same `isPlaying` from one render: the playing
+  //      effect arms a timer only when it's true, the idle effect only when
+  //      false. A single render can't be both, so at most one arms per render.
+  //   2. `isPlaying` is in both dep arrays, so when it flips React re-runs both
+  //      — and React runs ALL effect cleanups before ANY setups on a commit.
+  //      So the outgoing timer (e.g. the playing setTimeout) is always cleared
+  //      before the incoming one (the idle setInterval) is armed, with no
+  //      overlap window. Keeping them split keeps each branch's deps minimal.
 
-  if (error && !currentlyPlaying && !stats) {
-    // Fallback: show generic message
-    return (
-      <div className="bg-gradient-to-r from-poke-grass/20 to-poke-electric/20 rounded-2xl p-4 md:p-6 border-4 border-poke-grass/40">
-        <div className="flex items-center gap-3 sm:gap-4">
-          <div className="text-2xl sm:text-3xl">🎵</div>
-          <div>
-            <p className="text-white/90 font-bold text-base sm:text-lg">
-              Spotify listening stats
-            </p>
-            <p className="text-white/70 text-xs sm:text-sm">(will almost ALWAYS be The Weeknd)</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // While playing: refresh as the current track is about to end (so the next
+  // song appears promptly), capped at 30s to also catch manual skips. Skipped
+  // while the tab is hidden.
+  useEffect(() => {
+    if (!isPlaying || document.hidden) return;
+    const remaining = (track?.durationMs ?? 0) - (track?.progressMs ?? 0);
+    const delay = Math.min((remaining > 0 ? remaining : 30_000) + 2_000, 30_000);
+    const id = setTimeout(() => {
+      if (document.hidden) return;
+      fetchNowPlaying().then(setTrack);
+    }, delay);
+    return () => clearTimeout(id);
+  }, [isPlaying, track?.id, track?.progressMs, track?.durationMs]);
+
+  // While idle: poll every 60s so playback that starts later gets picked up.
+  useEffect(() => {
+    if (isPlaying) return;
+    const id = setInterval(() => {
+      if (document.hidden) return;
+      fetchNowPlaying().then((t) => {
+        if (t?.isPlaying) setTrack(t);
+      });
+    }, 60_000);
+    return () => clearInterval(id);
+  }, [isPlaying]);
 
   return (
-    <div className="bg-gradient-to-r from-poke-grass/20 to-poke-electric/20 rounded-2xl p-4 md:p-6 border-4 border-poke-grass/40">
-      {currentlyPlaying && currentlyPlaying.isPlaying ? (
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-2 h-2 bg-poke-grass rounded-full animate-pulse"></div>
-            <span className="text-poke-grass text-xs md:text-sm font-bold">NOW PLAYING</span>
-          </div>
-          
-          <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center md:items-start">
-            {/* Spinning Vinyl Record - Responsive Size */}
-            {currentlyPlaying.albumArt && (
-              <div className="relative flex-shrink-0">
-                <div className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40">
-                  {/* Vinyl Record */}
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gray-800 via-gray-900 to-black shadow-2xl border-4 border-gray-700 animate-spin-slow" style={{ animationDuration: '3s' }}>
-                    {/* Vinyl Grooves */}
-                    <div className="absolute inset-2 rounded-full border-2 border-gray-700/50"></div>
-                    <div className="absolute inset-4 rounded-full border border-gray-700/30"></div>
-                    <div className="absolute inset-6 rounded-full border border-gray-700/20"></div>
-                    <div className="absolute inset-8 rounded-full border border-gray-700/10"></div>
-                    <div className="absolute inset-10 rounded-full border border-gray-700/5"></div>
-                    
-                    {/* Album Art in Center */}
-                    <div className="absolute inset-4 rounded-full overflow-hidden border-2 border-gray-800">
-                      <img
-                        src={currentlyPlaying.albumArt}
-                        alt={currentlyPlaying.album}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    
-                    {/* Center Hole */}
-                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 rounded-full bg-black border border-gray-900 shadow-inner"></div>
-                    
-                    {/* Reflection Effect */}
-                    <div className="absolute top-3 left-1/4 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 blur-sm"></div>
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            {/* Track Info */}
-            <div className="flex-1 min-w-0 w-full md:w-auto space-y-3 md:space-y-4 text-center md:text-left">
-              <div>
-                <a
-                  href={currentlyPlaying.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white font-bold text-lg sm:text-xl hover:text-poke-grass transition-colors block break-words"
-                >
-                  {currentlyPlaying.name}
-                </a>
-                <p className="text-white/80 text-sm sm:text-base break-words mt-1">{currentlyPlaying.artist}</p>
-                <p className="text-white/60 text-xs sm:text-sm break-words mt-1">{currentlyPlaying.album}</p>
-                {currentlyPlaying.releaseDate && (
-                  <p className="text-white/50 text-xs mt-2">
-                    Released: {new Date(currentlyPlaying.releaseDate).getFullYear()}
-                  </p>
-                )}
-              </div>
-              
-              {/* Visual Equalizer - Responsive Size */}
-              <div className="flex items-end gap-1 sm:gap-1.5 h-8 sm:h-10 md:h-12 mt-2 md:mt-4">
-                {[...Array(16)].map((_, i) => {
-                  const baseHeight = 25 + Math.sin(i * 0.4) * 20;
-                  return (
-                    <div
-                      key={i}
-                      className="flex-1 bg-poke-grass rounded-t equalizer-bar"
-                      style={{
-                        height: `${baseHeight}%`,
-                        animation: `equalizer ${0.5 + i * 0.08}s ease-in-out infinite`,
-                        animationDelay: `${i * 0.08}s`,
-                      }}
-                    ></div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="text-2xl sm:text-3xl">🎵</div>
-            <div>
-              <p className="text-white/90 font-bold text-base sm:text-lg">
-                Spotify listening stats
-              </p>
-              {stats?.topArtists && stats.topArtists.length > 0 && (
-                <p className="text-white/70 text-xs sm:text-sm mt-1">
-                  Top artist: <span className="font-bold text-poke-grass">{stats.topArtists[0].name}</span>
-                </p>
-              )}
-            </div>
-          </div>
+    <div style={{ fontFamily: 'var(--font-family-mono)' }}>
+      <div className="my-3 h-px bg-[var(--detail-divider)]" />
 
-          {stats?.recentTracks && stats.recentTracks.length > 0 && (
-            <div className="pt-4 border-t border-poke-grass/20">
-              <p className="text-white/70 text-xs sm:text-sm mb-2 font-bold">Recently played:</p>
-              <div className="space-y-2">
-                {stats.recentTracks.slice(0, 3).map((track, idx) => (
-                  <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm">
-                    <span className="text-poke-grass">▶</span>
-                    <span className="text-white/80 break-words">
-                      {track.name} - {track.artist}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+      <div className="flex items-center gap-2">
+        <Equalizer playing={isPlaying} />
+        <span
+          className="text-[length:var(--text-screen-xs)] tracking-[0.05em] text-[color:var(--detail-heading)]"
+          style={{ fontFamily: 'var(--font-family-pokemon)' }}
+        >
+          {isPlaying ? 'NOW PLAYING' : 'SPOTIFY'}
+        </span>
+      </div>
+
+      <div className="mt-1">
+        {isPlaying && track ? (
+          <>
+            <a
+              href={track.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block truncate text-[length:var(--text-screen-sm)] text-[color:var(--list-name)] transition-colors duration-100 hover:text-[var(--color-poke-yellow)]"
+            >
+              {track.name}
+            </a>
+            <span className="block truncate text-[length:var(--text-screen-xs)] text-[color:var(--detail-muted)]">
+              {track.artist}
+            </span>
+          </>
+        ) : (
+          <span className="text-[length:var(--text-screen-sm)] text-[color:var(--detail-muted)]">
+            NOT PLAYING
+          </span>
+        )}
+      </div>
     </div>
   );
 }

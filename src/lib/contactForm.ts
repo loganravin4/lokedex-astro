@@ -1,3 +1,10 @@
+// UNUSED in the device UI. This is the legacy Astro contact-form handler: it
+// drives a server-rendered <form id="contact-form"> via getElementById and
+// posts to web3forms. The redesigned ContactEntry (Section 7) is static links
+// only (email/GitHub/LinkedIn) and never imports this, so there's no form in
+// the DOM for initContactForm() to bind to. It is NOT Astro-server code — it's
+// client-side DOM + a public web3forms POST — so it's retained for reference if
+// an interactive contact form is ever reintroduced. Safe to delete otherwise.
 import { trackFormEvent } from './analytics';
 
 interface Web3FormsResponse {

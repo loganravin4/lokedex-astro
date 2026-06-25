@@ -1,4 +1,5 @@
 import TypeBadge from '../ui/TypeBadge';
+import SpotifyWidget from '../features/SpotifyWidget';
 
 const GITHUB_URL = 'https://github.com/loganravin4';
 const LINKEDIN_URL = 'https://www.linkedin.com/in/logan-ravinuthala';
@@ -88,6 +89,10 @@ export default function AboutEntry() {
           ▶ LINKEDIN
         </a>
       </div>
+
+      {/* Live Spotify now-playing — a natural extension of the trainer card
+          (the bio already nods at Spotify minutes). Compact, screen-native. */}
+      <SpotifyWidget />
     </div>
   );
 }
