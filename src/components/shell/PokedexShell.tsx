@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { AnimationState } from '../../types/pokedex';
 import { usePokedex } from '../../hooks/usePokedex';
+import { useSynth } from '../../hooks/useSynth';
 import { useSanityData } from '../../hooks/useSanityData';
 import { buildEntries } from '../../lib/buildEntries';
 import ClosedCover from './ClosedCover';
@@ -27,6 +28,16 @@ export default function PokedexShell() {
   const [animationState, setAnimationState] = useState<AnimationState>('closed');
   const { isMuted, toggleMute, activeSection, selectedEntry, setSelectedEntry } =
     usePokedex();
+  const synth = useSynth(isMuted);
+
+  // Mute toggle: play the confirmation blip BEFORE flipping the state so the
+  // user always hears it. isMuted is the *current* state — true means the press
+  // is about to unmute, so the blip ascends; false means it's about to mute, so
+  // it descends. muteToggle bypasses the mute gate, so it sounds either way.
+  const handleMuteToggle = () => {
+    void synth.muteToggle(isMuted);
+    toggleMute();
+  };
 
   // Single Sanity fetch for the whole app, intentionally hoisted here.
   // Section 12 mandates the data is "fetched once on mount" — do NOT move this
@@ -107,7 +118,7 @@ export default function PokedexShell() {
         {animationState !== 'closed' && (
           <button
             type="button"
-            onClick={toggleMute}
+            onClick={handleMuteToggle}
             aria-label={isMuted ? 'Unmute' : 'Mute'}
             className="absolute top-[14px] right-[14px] z-20 cursor-pointer bg-transparent text-[length:var(--text-hw-xs)] text-[color:var(--detail-muted)] transition-colors duration-100 hover:text-[var(--color-poke-yellow)]"
             style={{ fontFamily: 'var(--font-family-pokemon)' }}

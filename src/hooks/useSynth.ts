@@ -84,6 +84,22 @@ export function useSynth(isMuted: boolean) {
         if (Tone) sequence(Tone, [440, 554, 659], 25, 0.28);
       },
 
+      // Two-tone confirmation blip for the mute toggle. Square, 25ms each
+      // note, gain 0.2. Ascending (440->660) when unmuting, descending
+      // (660->440) when muting — per the controlling Section 1 clause.
+      //
+      // Deliberately NOT gated by mutedRef: the blip must be audible even on
+      // the unmute press (when the device is still muted). It is wired in
+      // PokedexShell to fire BEFORE the mute state flips. ensureTone()/start()
+      // run here so the sound works even if the device was opened while muted
+      // (openFold short-circuits in that case and never loads Tone); this is a
+      // user gesture, so Tone.start() is allowed.
+      muteToggle: async (unmuting: boolean) => {
+        const Tone = await ensureTone();
+        await Tone.start();
+        sequence(Tone, unmuting ? [440, 660] : [660, 440], 25, 0.2);
+      },
+
       // One note of the boot arpeggio by index — C4/E4/G4/C5
       // (262/330/392/523Hz) square, 80ms, gain 0.3. Fired once per progress
       // segment as the boot sequence fills its bar (Section 1 / Section 9).

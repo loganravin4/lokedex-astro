@@ -85,17 +85,20 @@ select:        523Hz → 784Hz square wave, 30ms each note, gain 0.3
 back:          523Hz → 392Hz square wave, 30ms each note, gain 0.3
 sectionSwitch: 440Hz → 554Hz → 659Hz square wave, 25ms each note, gain 0.28
 openFold:      80Hz sine wave 150ms fast decay + white noise burst 80ms, gain 0.2
-boot:          C4→E4→G4→C5 (262→330→392→523Hz) square wave, 80ms per note,
-               20ms gap between notes, gain 0.3
+bootNote:      C4→E4→G4→C5 (262→330→392→523Hz) square wave, 80ms per note,
+               called once per boot progress segment by index (0–3)
+muteToggle:    ascending 440→660Hz when unmuting, descending 660→440Hz when muting,
+               square wave, 25ms each note, gain 0.2 — bypasses mute gate
 ```
 
 - Sounds mapped to interactions:
-  - `navigate` — D-pad up/down, list row changes
-  - `select` — D-pad right, A button, list item click
-  - `back` — D-pad left, B button
-  - `sectionSwitch` — section button click
-  - `boot` — plays during boot sequence, one note per progress stage
+  - `navigate` — D-pad up/down, arrow up/down keys
+  - `select` — D-pad right, A button, list item click, arrow right/Enter
+  - `back` — D-pad left, B button, arrow left
+  - `sectionSwitch` — section button clicks
+  - `bootNote(0–3)` — one note per boot progress segment
   - `openFold` — fires on device open, triggers Tone.start()
+  - `muteToggle` — mute button click, fires before state flips
 
 ---
 
