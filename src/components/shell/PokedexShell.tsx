@@ -25,7 +25,14 @@ import DetailPanel from '../screens/DetailPanel';
 // animationState stays local here — it is view/animation state, not the shared
 // content state that lives in usePokedex.
 export default function PokedexShell() {
-  const [animationState, setAnimationState] = useState<AnimationState>('closed');
+  // Mobile (< 768px) skips the closed cover and the fold animation entirely and
+  // boots straight into the device (Section 8). innerWidth is read once at mount
+  // via the lazy initializer — the layout orientation is fixed on load, so no
+  // resize listener is needed. (No openFold gesture fires on mobile, so the boot
+  // arpeggio stays silent there — browser autoplay policy would block it anyway.)
+  const [animationState, setAnimationState] = useState<AnimationState>(() =>
+    typeof window !== 'undefined' && window.innerWidth < 768 ? 'booting' : 'closed',
+  );
   const { isMuted, toggleMute, activeSection, selectedEntry, setSelectedEntry } =
     usePokedex();
   const synth = useSynth(isMuted);
@@ -82,7 +89,7 @@ export default function PokedexShell() {
         )}
 
         {(animationState === 'booting' || animationState === 'ready') && (
-          <div className="pokedex-shell w-[var(--device-width)] h-[var(--device-height)] flex flex-row items-stretch">
+          <div className="pokedex-shell flex items-stretch flex-col md:flex-row w-[100vw] h-[100vh] md:w-[var(--device-width)] md:h-[var(--device-height)]">
             <LeftHalf
               listContent={
                 animationState === 'booting' ? (

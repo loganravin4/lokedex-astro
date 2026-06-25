@@ -15,7 +15,7 @@ interface LeftHalfProps {
 // shell exactly per the --panel-width formula in Section 4.
 export default function LeftHalf({ listContent }: LeftHalfProps) {
   return (
-    <div className="shell-left relative box-content w-[var(--panel-width)] rounded-[18px_0_0_18px] flex flex-col p-[var(--shell-padding)]">
+    <div className="shell-left relative box-border md:box-content w-[100vw] h-[50vh] md:w-[var(--panel-width)] md:h-auto rounded-[18px_18px_0_0] md:rounded-[18px_0_0_18px] flex flex-col p-[var(--shell-padding)]">
       {/* Sensor eye — top-left detail */}
       <SensorEye />
 

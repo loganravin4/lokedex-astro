@@ -35,12 +35,15 @@ export default function RightHalf({ isReady, entries = [], detailContent }: Righ
   };
 
   return (
-    <div className="relative box-content w-[var(--panel-width)] bg-[var(--shell-red)] rounded-[0_18px_18px_0] flex flex-col p-[var(--shell-padding)]">
+    <div className="relative box-border md:box-content w-[100vw] h-[50vh] md:w-[var(--panel-width)] md:h-auto bg-[var(--shell-red)] rounded-[0_0_18px_18px] md:rounded-[0_18px_18px_0] flex flex-col p-[var(--shell-padding)]">
       {/* Detail screen */}
       <ScreenBezel label="DATA">{detailContent}</ScreenBezel>
 
       {/* D-pad (left) + action buttons (right) — Section 8 layout */}
-      <div className="flex items-center justify-between h-[var(--control-area-height)] px-4">
+      {/* Controls are hidden on mobile (DPad/ActionButtons carry their own
+          hidden md:* classes); drop the fixed control-area height there too so
+          the empty row doesn't reserve 140px of the 50vh half. */}
+      <div className="flex items-center justify-between md:h-[var(--control-area-height)] px-4">
         <DPad
           isReady={isReady}
           onUp={() => setFocusedIndex(Math.max(0, focusedIndex - 1))}

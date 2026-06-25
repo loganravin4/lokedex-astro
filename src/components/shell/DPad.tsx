@@ -50,7 +50,7 @@ export default function DPad({ isReady, onUp, onDown, onLeft, onRight }: DPadPro
   useDPad({ onUp: handleUp, onDown: handleDown, onLeft: handleLeft, onRight: handleRight });
 
   return (
-    <div className="grid w-[var(--dpad-size)] h-[var(--dpad-size)] grid-cols-[repeat(3,24px)] grid-rows-[repeat(3,24px)]">
+    <div className="hidden md:grid w-[var(--dpad-size)] h-[var(--dpad-size)] grid-cols-[repeat(3,24px)] grid-rows-[repeat(3,24px)]">
       <button
         type="button"
         aria-label="Up"

@@ -12,8 +12,8 @@ interface ScreenBezelProps {
 // (9) and scanlines (10). A small pixel label sits below the bezel.
 export default function ScreenBezel({ children, label }: ScreenBezelProps) {
   return (
-    <div className="screen-bezel flex-1 relative flex flex-col">
-      <div className="screen-glass flex-1 relative overflow-hidden">
+    <div className="screen-bezel flex-1 min-h-0 relative flex flex-col">
+      <div className="screen-glass flex-1 min-h-0 relative overflow-hidden">
         {/* Content layer — above the glass background, below glow + scanlines */}
         <div className="relative z-[1] h-full">{children}</div>
       </div>

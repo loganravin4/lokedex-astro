@@ -26,13 +26,13 @@ export default function SectionButtons() {
   };
 
   return (
-    <div className="flex w-full justify-center gap-[8px]">
+    <div className="no-scrollbar flex w-full flex-nowrap justify-start gap-[8px] overflow-x-auto px-2 md:justify-center md:overflow-visible md:px-0">
       {SECTIONS.map(({ label, section }) => (
         <button
           key={section}
           type="button"
           onClick={() => handleClick(section)}
-          className={clsx('btn-section', { active: section === activeSection })}
+          className={clsx('btn-section shrink-0', { active: section === activeSection })}
         >
           {label}
         </button>

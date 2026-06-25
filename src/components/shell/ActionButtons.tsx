@@ -24,7 +24,7 @@ export default function ActionButtons({ onA, onB }: ActionButtonsProps) {
   };
 
   return (
-    <div className="flex items-center gap-[14px]">
+    <div className="hidden md:flex items-center gap-[14px]">
       <button type="button" aria-label="B (back)" onClick={handleB} className="btn-action">
         B
       </button>
