@@ -5,16 +5,16 @@ interface ExperienceEntryProps {
   exp: Experience;
 }
 
-// "Jan 2024" — short month + year, matching the existing ExperienceCard format.
+// "Jan 2024"
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 }
 
-// Detail-panel layout for a single experience (Section 7 ExperienceEntry).
+// Detail-panel layout for a single experience
 export default function ExperienceEntry({ exp }: ExperienceEntryProps) {
   const start = formatDate(exp.startDate);
-  // current jobs (or any without an endDate) read as PRESENT (Section 12).
+  // current jobs (or any without an endDate) read as PRESENT
   const end = exp.current || !exp.endDate ? 'PRESENT' : formatDate(exp.endDate);
   const hasProjects = Boolean(exp.projects && exp.projects.length > 0);
 
@@ -23,7 +23,6 @@ export default function ExperienceEntry({ exp }: ExperienceEntryProps) {
       className="no-scrollbar h-full overflow-y-auto p-[var(--screen-padding)]"
       style={{ fontFamily: 'var(--font-family-mono)' }}
     >
-      {/* Header */}
       <h2 className="text-[length:var(--text-screen-xl)] font-semibold text-[color:var(--detail-heading)]">
         {exp.title}
       </h2>
@@ -37,7 +36,6 @@ export default function ExperienceEntry({ exp }: ExperienceEntryProps) {
 
       <div className="my-3 h-px bg-[var(--detail-divider)]" />
 
-      {/* Description bullets */}
       {exp.description && exp.description.length > 0 && (
         <>
           <PixelLabel className="mb-2">HIGHLIGHTS:</PixelLabel>
@@ -53,7 +51,6 @@ export default function ExperienceEntry({ exp }: ExperienceEntryProps) {
         </>
       )}
 
-      {/* Sub-projects */}
       {hasProjects && (
         <div className="mt-4">
           <PixelLabel className="mb-2">PROJECTS:</PixelLabel>

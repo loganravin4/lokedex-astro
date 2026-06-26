@@ -10,7 +10,7 @@ interface RightHalfProps {
   // True only once the boot sequence finishes. Gates D-pad input so presses
   // during 'booting' don't mutate the list cursor before it's visible.
   isReady: boolean;
-  // Active section's entries — the same list ListPanel renders, so focusedIndex
+  // Active section's entries -- the same list ListPanel renders, so focusedIndex
   // resolves to the same entry. Defaults to [] for the pre-'ready' renders
   // (HingeAnimation) where input is gated anyway.
   entries?: ListEntry[];
@@ -19,16 +19,12 @@ interface RightHalfProps {
   detailContent?: ReactNode;
 }
 
-// Right half of the device housing. Holds the detail screen + d-pad /
-// action controls and the speaker grille.
-// box-sizing: content-box so width (--panel-width) + padding fills the
-// shell exactly per the --panel-width formula in Section 4.
+// Right half of the device housing. box-sizing: content-box so width
+// (--panel-width) + padding fills the shell exactly.
 export default function RightHalf({ isReady, entries = [], detailContent }: RightHalfProps) {
   const { focusedIndex, setFocusedIndex, setSelectedEntry } = usePokedex();
 
-  // Clamp downward navigation to the last entry (Task 10 TODO, now resolved).
   const maxIndex = Math.max(0, entries.length - 1);
-  // Right / A select the focused entry by its _id.
   const selectFocused = () => {
     const entry = entries[focusedIndex];
     if (entry) setSelectedEntry(entry.id);
@@ -36,10 +32,8 @@ export default function RightHalf({ isReady, entries = [], detailContent }: Righ
 
   return (
     <div className="relative box-border md:box-content w-[100vw] h-[50vh] md:w-[var(--panel-width)] md:h-auto bg-[var(--shell-red)] rounded-[0_0_18px_18px] md:rounded-[0_18px_18px_0] flex flex-col p-[var(--shell-padding)]">
-      {/* Detail screen */}
       <ScreenBezel label="DATA">{detailContent}</ScreenBezel>
 
-      {/* D-pad (left) + action buttons (right) — Section 8 layout */}
       {/* Controls are hidden on mobile (DPad/ActionButtons carry their own
           hidden md:* classes); drop the fixed control-area height there too so
           the empty row doesn't reserve 140px of the 50vh half. */}
@@ -54,7 +48,6 @@ export default function RightHalf({ isReady, entries = [], detailContent }: Righ
         <ActionButtons onA={selectFocused} onB={() => setSelectedEntry(null)} />
       </div>
 
-      {/* Speaker grille — bottom-right detail */}
       <SpeakerGrille />
     </div>
   );

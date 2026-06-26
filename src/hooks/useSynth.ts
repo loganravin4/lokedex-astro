@@ -1,14 +1,13 @@
 import { useMemo, useRef } from 'react';
 import type * as ToneNS from 'tone';
 
-// The ONLY file in the codebase that touches Tone.js (Section 1).
-// All sounds are synthesized at runtime — no audio files. Frequencies,
-// durations and gains are the exact values from the Section 1 sound spec.
+// The ONLY file in the codebase that touches Tone.js. All sounds are
+// synthesized at runtime -- no audio files.
 //
 // Tone is loaded lazily via dynamic import inside the first user gesture
 // (openFold), NOT at module load. This keeps the AudioContext from being
-// created before a gesture — which would trip the browser autoplay warning
-// — and code-splits Tone.js out of the initial bundle. Every other sound
+// created before a gesture -- which would trip the browser autoplay warning
+// -- and code-splits Tone.js out of the initial bundle. Every other sound
 // runs only after openFold, so the module is already cached by then.
 let toneMod: typeof ToneNS | null = null;
 let toneLoading: Promise<typeof ToneNS> | null = null;
@@ -60,33 +59,28 @@ export function useSynth(isMuted: boolean) {
     const ready = () => (mutedRef.current ? null : toneMod);
 
     return {
-      // 880Hz square, 40ms, gain 0.25, fast exponential decay
       navigate: () => {
         const Tone = ready();
         if (Tone) blip(Tone, 880, 0.04, 0.25, Tone.now());
       },
 
-      // 523Hz -> 784Hz square, 30ms each note, gain 0.3
       select: () => {
         const Tone = ready();
         if (Tone) sequence(Tone, [523, 784], 30, 0.3);
       },
 
-      // 523Hz -> 392Hz square, 30ms each note, gain 0.3
       back: () => {
         const Tone = ready();
         if (Tone) sequence(Tone, [523, 392], 30, 0.3);
       },
 
-      // 440Hz -> 554Hz -> 659Hz square, 25ms each note, gain 0.28
       sectionSwitch: () => {
         const Tone = ready();
         if (Tone) sequence(Tone, [440, 554, 659], 25, 0.28);
       },
 
-      // Two-tone confirmation blip for the mute toggle. Square, 25ms each
-      // note, gain 0.2. Ascending (440->660) when unmuting, descending
-      // (660->440) when muting — per the controlling Section 1 clause.
+      // Confirmation blip for the mute toggle: ascending when unmuting,
+      // descending when muting.
       //
       // Deliberately NOT gated by mutedRef: the blip must be audible even on
       // the unmute press (when the device is still muted). It is wired in
@@ -100,17 +94,16 @@ export function useSynth(isMuted: boolean) {
         sequence(Tone, unmuting ? [440, 660] : [660, 440], 25, 0.2);
       },
 
-      // One note of the boot arpeggio by index — C4/E4/G4/C5
-      // (262/330/392/523Hz) square, 80ms, gain 0.3. Fired once per progress
-      // segment as the boot sequence fills its bar (Section 1 / Section 9).
+      // One boot-arpeggio note by index (C4/E4/G4/C5), fired once per progress
+      // segment as the boot bar fills.
       bootNote: (index: number) => {
         const Tone = ready();
         const freq = [262, 330, 392, 523][index];
         if (Tone && freq) blip(Tone, freq, 0.08, 0.3, Tone.now());
       },
 
-      // 80Hz sine 150ms fast decay + white-noise burst 80ms, gain 0.2.
-      // Loads Tone and calls Tone.start() within the user gesture.
+      // Mechanical open sound. Loads Tone and calls Tone.start() within the
+      // user gesture (required by browser autoplay policy).
       openFold: async () => {
         if (mutedRef.current) return;
         const Tone = await ensureTone();
@@ -120,7 +113,7 @@ export function useSynth(isMuted: boolean) {
         // Low sine thud.
         blip(Tone, 80, 0.15, 0.2, t0, 'sine');
 
-        // White-noise burst (~80ms) scaled to gain 0.2.
+        // White-noise burst.
         const noiseGain = new Tone.Gain(0.2).toDestination();
         const noise = new Tone.NoiseSynth({
           noise: { type: 'white' },

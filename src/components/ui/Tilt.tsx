@@ -2,7 +2,7 @@
 
 // Copied verbatim from Motion Primitives (https://motion-primitives.com/docs/tilt).
 // Only change from upstream: import from 'framer-motion' (the installed dep)
-// instead of 'motion/react' — framer-motion re-exports these same symbols.
+// instead of 'motion/react' -- framer-motion re-exports these same symbols.
 import React, { useRef } from 'react';
 import {
   motion,

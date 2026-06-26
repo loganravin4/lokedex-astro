@@ -6,16 +6,13 @@ import TypeBadge from '../ui/TypeBadge';
 import type { ListEntry } from '../../types/pokedex';
 
 interface ListPanelProps {
-  // Built upstream (PokedexShell) from a single useSanityData call so the same
-  // list backs both the visual cursor and the D-pad selection in RightHalf.
+  // Built upstream (PokedexShell) from a single useSanityData call
   entries: ListEntry[];
   loading: boolean;
   error: Error | null;
 }
 
-// Left screen: the scrollable numbered entry list for the active section
-// (Section 7 ListPanel). All screen text is JetBrains Mono — set once on the
-// scroll container and inherited by the rows (Section 5).
+// Left screen: the scrollable numbered entry list for the active section.
 export default function ListPanel({ entries, loading, error }: ListPanelProps) {
   const {
     activeSection,
@@ -28,14 +25,13 @@ export default function ListPanel({ entries, loading, error }: ListPanelProps) {
   const synth = useSynth(isMuted);
   const focusedRowRef = useRef<HTMLDivElement | null>(null);
 
-  // About/Contact are single-entry sections — auto-select on switch so the
-  // detail panel has something to show without a click (Section 7).
+  // About/Contact are single-entry sections
   useEffect(() => {
     if (activeSection === 'about') setSelectedEntry('about');
     else if (activeSection === 'contact') setSelectedEntry('contact');
   }, [activeSection, setSelectedEntry]);
 
-  // Scroll follows the cursor (Section 9 "List navigation").
+  // Scroll follows the cursor
   useEffect(() => {
     focusedRowRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [focusedIndex]);
@@ -88,9 +84,6 @@ export default function ListPanel({ entries, loading, error }: ListPanelProps) {
               <TypeBadge type={entry.types[0]} label={entry.types[0]} />
             )}
 
-            {/* Single 28px line. For experience, the company follows the
-                title inline as "TITLE · COMPANY" — the title keeps the row's
-                name/selected color, the company is muted (Section 7). */}
             <span
               className={clsx(
                 'flex-1 truncate text-[length:var(--text-screen-md)]',
@@ -108,8 +101,7 @@ export default function ListPanel({ entries, loading, error }: ListPanelProps) {
               )}
             </span>
 
-            {/* Reserved-width cursor column so the name's truncation point
-                doesn't shift as focus moves. */}
+            {/* Reserved-width cursor column */}
             <span className="w-[12px] text-center text-[length:var(--text-screen-xs)] text-[color:var(--list-cursor)]">
               {isFocused ? '▶' : ''}
             </span>

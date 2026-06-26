@@ -29,7 +29,7 @@
   --font-family-mono: "JetBrains Mono", monospace;
 }
 
-/* --- POKEDEX_SPEC.md Section 4 tokens (new) --- */
+/* --- Design tokens --- */
 :root {
   /* --- Hardware shell --- */
   --shell-red: #CC2200;
@@ -111,8 +111,7 @@
   --btn-section-width: 52px;
 
   /* --- Hardware detail colors (page bg + sensor eye) ---
-     Values specified directly by build tasks; stored here so no hex
-     is hardcoded in component files (Section 4). */
+     Stored here so no hex is hardcoded in component files. */
   --page-bg: #0d0d0d;
   --sensor-eye-housing: #111111;
   --sensor-eye-ring: #222222;
@@ -166,7 +165,7 @@
   50% { opacity: 0; }
 }
 
-/* Hidden scrollbar for in-screen scroll regions (Section 7 ListPanel).
+/* Hidden scrollbar for in-screen scroll regions.
    The WebKit rule is added alongside scrollbar-width so the scrollbar is
    actually hidden in Chrome/Safari, not just Firefox. */
 .no-scrollbar {

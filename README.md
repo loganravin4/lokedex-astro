@@ -1,43 +1,50 @@
-# Astro Starter Kit: Minimal
+# Lokédex
+
+An interactive Pokédex-style portfolio device -- a single retro handheld you open, boot, and navigate to browse projects, experience, and more.
+
+**Live:** [loganravinuthala.dev](https://loganravinuthala.dev)
+
+## Tech stack
+
+- **Vite + React** -- single-page app, no routing (navigation is internal device state)
+- **Tailwind CSS v4** -- styling and design tokens
+- **Sanity** -- headless CMS for projects and experience content
+- **Tone.js** -- runtime-synthesized hardware sound effects (no audio files)
+- **Framer Motion** -- the open/fold animation and panel transitions
+- **Vercel** -- hosting, plus a serverless function for the Spotify now-playing widget
+
+## Local development
 
 ```sh
-npm create astro@latest -- --template minimal
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+The dev server runs at `http://localhost:5173`.
 
-## 🚀 Project Structure
+### Environment variables
 
-Inside of your Astro project, you'll see the following folders and files:
+Create a `.env` file in the project root. Client-side values must be `VITE_`-prefixed to be exposed to the browser.
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```sh
+# Sanity (required)
+VITE_SANITY_PROJECT_ID=your_project_id
+VITE_SANITY_DATASET=production
+
+# Analytics (optional -- features no-op if unset)
+VITE_PUBLIC_POSTHOG_KEY=your_posthog_key
+VITE_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
+VITE_PUBLIC_CLARITY_PROJECT_ID=your_clarity_id
+
+# Spotify now-playing (server-side, used by the Vercel function)
+SPOTIFY_CLIENT_ID=your_client_id
+SPOTIFY_CLIENT_SECRET=your_client_secret
+SPOTIFY_REFRESH_TOKEN=your_refresh_token
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Build
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+```sh
+npm run build     # production build to ./dist
+npm run preview   # preview the build locally
+```

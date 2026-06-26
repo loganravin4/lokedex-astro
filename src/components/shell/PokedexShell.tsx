@@ -6,6 +6,7 @@ import { useSanityData } from '../../hooks/useSanityData';
 import { buildEntries } from '../../lib/buildEntries';
 import ClosedCover from './ClosedCover';
 import HingeAnimation from './HingeAnimation';
+import CloseAnimation from './CloseAnimation';
 import BootSequence from './BootSequence';
 import LeftHalf from './LeftHalf';
 import Hinge from './Hinge';
@@ -13,54 +14,63 @@ import RightHalf from './RightHalf';
 import ListPanel from '../screens/ListPanel';
 import DetailPanel from '../screens/DetailPanel';
 
-// Outer plastic housing. Centers the device on the dark backdrop and renders
-// one of the four animationState views (Section 7 / Section 8):
-//   'closed'  → <ClosedCover />, which owns the open interaction + sound
-//   'opening' → <HingeAnimation />, the 3D fold (Section 9 "Opening fold")
-//   'booting' → open shell with the boot sequence (wired up in Task 8)
-//   'ready'   → open shell, fully interactive (Task 9+)
-// The static open layout (booting/ready) mirrors HingeAnimation's final frame
-// exactly so there is no layout jump when the fold settles.
-//
-// animationState stays local here — it is view/animation state, not the shared
-// content state that lives in usePokedex.
+// Outer plastic housing; renders the active animationState view. The static open
+// layout (booting/ready) mirrors HingeAnimation's final frame so there's no layout jump.
 export default function PokedexShell() {
-  // Mobile (< 768px) skips the closed cover and the fold animation entirely and
-  // boots straight into the device (Section 8). innerWidth is read once at mount
-  // via the lazy initializer — the layout orientation is fixed on load, so no
-  // resize listener is needed. (No openFold gesture fires on mobile, so the boot
-  // arpeggio stays silent there — browser autoplay policy would block it anyway.)
+  // Mobile (< 768px) skips the closed cover + fold and boots straight in. innerWidth
+  // is read once at mount (orientation is fixed on load, no resize listener needed).
+  // openFold never fires on mobile, so the boot arpeggio stays silent (autoplay blocks it).
   const [animationState, setAnimationState] = useState<AnimationState>(() =>
     typeof window !== 'undefined' && window.innerWidth < 768 ? 'booting' : 'closed',
   );
-  const { isMuted, toggleMute, activeSection, selectedEntry, setSelectedEntry } =
-    usePokedex();
+  const {
+    isMuted,
+    toggleMute,
+    activeSection,
+    selectedEntry,
+    setSelectedEntry,
+    setFocusedIndex,
+  } = usePokedex();
   const synth = useSynth(isMuted);
 
-  // Mute toggle: play the confirmation blip BEFORE flipping the state so the
-  // user always hears it. isMuted is the *current* state — true means the press
-  // is about to unmute, so the blip ascends; false means it's about to mute, so
-  // it descends. muteToggle bypasses the mute gate, so it sounds either way.
+  // Play the confirmation blip BEFORE flipping state so the user always hears it;
+  // muteToggle bypasses the mute gate, so it sounds even while muted.
   const handleMuteToggle = () => {
     void synth.muteToggle(isMuted);
     toggleMute();
   };
 
-  // Single Sanity fetch for the whole app, intentionally hoisted here.
-  // Section 12 mandates the data is "fetched once on mount" — do NOT move this
-  // into ListPanel/RightHalf as a per-component useSanityData call. Both the
-  // list (ListPanel) and the hardware selection (RightHalf) must index into the
-  // SAME entries array for focusedIndex to line up, and two callers would mean
-  // two fetches. The fetch kicks off while the cover is still closed, so data
-  // is ready by the time the boot sequence finishes.
+  // Close gesture (× / Escape): reset cursor/selection so the device reopens fresh, then fold.
+  const handleClose = () => {
+    synth.back();
+    setSelectedEntry(null);
+    setFocusedIndex(0);
+    setAnimationState('closing');
+  };
+
+  // Escape closes the device when open; the ref keeps animationState fresh so the
+  // once-registered handler never goes stale.
+  const animationStateRef = useRef(animationState);
+  animationStateRef.current = animationState;
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      const state = animationStateRef.current;
+      if (state === 'booting' || state === 'ready') handleClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Single Sanity fetch for the whole app, hoisted here on purpose. Do NOT move it
+  // into ListPanel/RightHalf as per-component calls: both must index into the SAME
+  // entries array for focusedIndex to line up, and two callers would mean two fetches.
   const { projects, experiences, loading, error } = useSanityData();
   const entries = buildEntries(activeSection, projects, experiences);
 
-  // Hash resolution (Task 9 NOTE / usePokedex parseHash): the hash parser stores
-  // the raw segment as selectedEntry, which for a hand-authored/shared
-  // #projects/<slug> link is a slug, not an _id. Once data lands, resolve a
-  // slug to its _id exactly once. Experiences have no slug field, so their hash
-  // segment is always already an _id and needs no resolution.
+  // A shared #projects/<slug> link stores a slug (not an _id) as selectedEntry;
+  // resolve it to an _id once data loads. Experience hashes are already _ids.
   const resolvedSlugRef = useRef(false);
   useEffect(() => {
     if (loading || resolvedSlugRef.current) return;
@@ -88,6 +98,10 @@ export default function PokedexShell() {
           <HingeAnimation onComplete={() => setAnimationState('booting')} />
         )}
 
+        {animationState === 'closing' && (
+          <CloseAnimation onComplete={() => setAnimationState('closed')} />
+        )}
+
         {(animationState === 'booting' || animationState === 'ready') && (
           <div className="pokedex-shell flex items-stretch flex-col md:flex-row w-[100vw] h-[100vh] md:w-[var(--device-width)] md:h-[var(--device-height)]">
             <LeftHalf
@@ -103,10 +117,8 @@ export default function PokedexShell() {
               }
             />
             <Hinge />
-            {/* isReady gates D-pad input so arrow keys / arm clicks during the
-                boot sequence don't move the (not-yet-visible) list cursor.
-                detailContent is the right-screen DetailPanel — only mounted once
-                ready; the boot render leaves the right screen empty. */}
+            {/* isReady gates D-pad input during boot so stray keys don't move the
+                hidden cursor; detailContent mounts only once ready. */}
             <RightHalf
               isReady={animationState === 'ready'}
               entries={entries}
@@ -119,9 +131,20 @@ export default function PokedexShell() {
           </div>
         )}
 
-        {/* Global mute toggle (Section 7 / Section 10): lives on the shell,
-            top-right of the device. Hidden on the closed cover — no controls
-            there. */}
+        {/* Close button, top-left, kept clear of the sensor eye. */}
+        {(animationState === 'booting' || animationState === 'ready') && (
+          <button
+            type="button"
+            onClick={handleClose}
+            aria-label="Close"
+            className="absolute top-[14px] left-[34px] z-20 cursor-pointer bg-transparent text-[length:var(--text-hw-xs)] text-[color:var(--detail-muted)] transition-colors duration-100 hover:text-[var(--color-poke-yellow)]"
+            style={{ fontFamily: 'var(--font-family-pokemon)' }}
+          >
+            ×
+          </button>
+        )}
+
+        {/* Global mute toggle. Hidden on the closed cover. */}
         {animationState !== 'closed' && (
           <button
             type="button"

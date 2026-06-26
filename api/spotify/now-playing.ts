@@ -1,18 +1,15 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-// Vercel serverless function (Node runtime). Ported from the original Astro
-// endpoint src/pages/api/spotify/now-playing.ts, which the Astro→Vite migration
-// removed. It lives in /api (outside src/) so Vercel deploys it as a function
-// and it stays out of the Vite client bundle and tsconfig (`include: ["src"]`).
+// Vercel serverless function (Node runtime). Lives in /api (outside src/) so Vercel
+// deploys it as a function and it stays out of the Vite client bundle and tsconfig.
 //
-// Secrets never reach the browser: SPOTIFY_CLIENT_ID / SECRET / REFRESH_TOKEN
-// are read from process.env here, exchanged for a short-lived access token, and
-// only the normalized track is returned. On ANY failure (missing env, token
-// error, nothing playing) it returns 200 + null so the widget shows NOT PLAYING
-// rather than surfacing an error.
+// Secrets never reach the browser: SPOTIFY_CLIENT_ID / SECRET / REFRESH_TOKEN are
+// read from process.env, exchanged for a short-lived access token, and only the
+// normalized track is returned. On ANY failure it returns 200 + null so the widget
+// shows NOT PLAYING instead of surfacing an error.
 //
-// @vercel/node is a type-only import (erased at build) and is provided by
-// Vercel's function build; for local editor types run `npm i -D @vercel/node`.
+// @vercel/node is a type-only import (erased at build), provided by Vercel's build;
+// for local editor types run `npm i -D @vercel/node`.
 export default async function handler(_req: VercelRequest, res: VercelResponse) {
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;

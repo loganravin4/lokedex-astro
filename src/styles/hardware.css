@@ -1,8 +1,6 @@
-/* hardware.css — all hardware-specific CSS.
- * Rules copied verbatim from POKEDEX_SPEC.md Section 6.
+/* hardware.css -- all hardware-specific CSS.
  * Shadow values must not be simplified or substituted. */
 
-/* 6.1 Plastic Shell Body */
 .pokedex-shell {
   background: var(--shell-red);
   box-shadow:
@@ -18,7 +16,6 @@
   background: linear-gradient(145deg, var(--shell-red-highlight) 0%, var(--shell-red) 30%);
 }
 
-/* 6.2 Screen Bezel */
 .screen-bezel {
   background: var(--screen-bezel);
   box-shadow:
@@ -29,7 +26,6 @@
   padding: var(--bezel-thickness);
 }
 
-/* 6.3 Screen Glass */
 .screen-glass {
   background: var(--screen-bg);
   border-radius: 4px;
@@ -37,7 +33,7 @@
   overflow: hidden;
 }
 
-/* Scanlines overlay — pseudo element, always present */
+/* Scanlines overlay */
 .screen-glass::after {
   content: '';
   position: absolute;
@@ -52,7 +48,7 @@
   z-index: 10;
 }
 
-/* Subtle screen glow — pseudo element */
+/* Subtle screen glow */
 .screen-glass::before {
   content: '';
   position: absolute;
@@ -62,7 +58,6 @@
   z-index: 9;
 }
 
-/* 6.4 D-Pad */
 .dpad-arm {
   background: var(--btn-dpad);
   box-shadow:
@@ -83,7 +78,6 @@
   transform: scale(0.96);
 }
 
-/* 6.5 Action Buttons (A/B) */
 .btn-action {
   background: var(--btn-action-a);
   border-radius: 50%;
@@ -113,7 +107,6 @@
   transform: translateY(3px);
 }
 
-/* 6.6 Section Switcher Buttons */
 .btn-section {
   background: var(--btn-section-bg);
   color: var(--btn-section-text);
@@ -143,7 +136,6 @@
   transform: translateY(2px);
 }
 
-/* 6.7 Hinge */
 .hinge {
   width: var(--hinge-width);
   background: var(--shell-hinge);
@@ -154,7 +146,6 @@
   align-self: stretch;
 }
 
-/* 6.8 Speaker Grille Dots */
 .speaker-dot {
   width: 5px;
   height: 5px;
@@ -162,9 +153,7 @@
   background: var(--shell-red-dark);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
 }
-/* Render as a 4×3 grid of .speaker-dot elements */
 
-/* 6.9 Indicator Light */
 .indicator-light {
   width: 10px;
   height: 10px;

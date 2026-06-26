@@ -6,10 +6,6 @@ interface ActionButtonsProps {
   onB: () => void;
 }
 
-// A/B action buttons (Section 6.5 / Section 7). B sits left, A sits right.
-// A = confirm/select (mirrors D-pad right), B = back (mirrors D-pad left).
-// Sound is owned here per the Section 1 mapping (A = select, B = back); the
-// state change is delegated to the parent callbacks.
 export default function ActionButtons({ onA, onB }: ActionButtonsProps) {
   const { isMuted } = usePokedex();
   const synth = useSynth(isMuted);

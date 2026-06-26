@@ -1,6 +1,4 @@
-// Decorative speaker grille — bottom-right detail of the right half.
-// 4 columns × 3 rows of dots (Section 6.8). Self-positioned so RightHalf
-// stays readable.
+// Decorative speaker grille, bottom-right of the right half. Self-positioned.
 export default function SpeakerGrille() {
   const dots = Array.from({ length: 12 });
 

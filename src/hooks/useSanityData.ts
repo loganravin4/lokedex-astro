@@ -11,9 +11,8 @@ interface SanityData {
 }
 
 /**
- * Loads all Pokédex data once on mount. Projects and experiences are
- * fetched in parallel; the dataset is small enough that no per-entry
- * fetches are needed (POKEDEX_SPEC.md Section 12).
+ * Loads all Pokédex data once on mount: projects + experiences in parallel.
+ * The dataset is small enough that no per-entry fetches are needed.
  */
 export function useSanityData(): SanityData {
   const [projects, setProjects] = useState<Project[]>([]);

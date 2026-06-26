@@ -1,4 +1,4 @@
-// Core device state and view types — POKEDEX_SPEC.md Section 11.
+// Core device state and view types.
 
 export type Section = 'projects' | 'experience' | 'about' | 'contact';
 
@@ -10,9 +10,7 @@ export interface PokedexState {
   isMuted: boolean;
 }
 
-// Supporting view types used by shell + screen components.
-
-export type AnimationState = 'closed' | 'opening' | 'booting' | 'ready';
+export type AnimationState = 'closed' | 'opening' | 'booting' | 'ready' | 'closing';
 
 export interface ListEntry {
   id: string;

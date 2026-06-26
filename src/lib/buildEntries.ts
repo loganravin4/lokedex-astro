@@ -1,10 +1,9 @@
 import type { Section, ListEntry } from '../types/pokedex';
 import type { Project, Experience } from '../types/sanity';
 
-// Maps the active section's Sanity data into the uniform ListEntry[] the list
-// renders and the D-pad/action buttons index into (Section 12 mapping).
-// Both ListPanel and RightHalf derive from this so focusedIndex stays aligned
-// across the visual list and the hardware selection logic.
+// Maps the active section's Sanity data into a uniform ListEntry[]. Both
+// ListPanel and RightHalf derive from this so focusedIndex stays aligned across
+// the visual list and the hardware selection.
 export function buildEntries(
   section: Section,
   projects: Project[],
@@ -28,8 +27,8 @@ export function buildEntries(
         subtitle: e.company,
       }));
     case 'about':
-      return [{ id: 'about', number: '—', name: 'ABOUT' }];
+      return [{ id: 'about', number: '--', name: 'ABOUT' }];
     case 'contact':
-      return [{ id: 'contact', number: '—', name: 'CONTACT' }];
+      return [{ id: 'contact', number: '--', name: 'CONTACT' }];
   }
 }

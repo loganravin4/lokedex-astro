@@ -1,17 +1,11 @@
 interface TypeBadgeProps {
-  type: string; // drives the chip color via the --color-poke-* token
-  label: string; // the text rendered in the chip
+  type: string;
+  label: string;
 }
 
-// Hardware-spec type badge (Section 13 compliant): no shadow, no framer-motion,
-// no hover. A small colored chip — the type color at 20% fill / 60% border —
-// sized for the screen rows. Replaces the web-styled projects/TypeBadge inside
-// the device screens.
-//
-// Each type maps to its --color-poke-* token; opacity is applied with
-// color-mix so the single token drives fill, border, and text. The color is a
-// runtime value derived from the `type` prop, so it lives in style{} per the
-// Section 13 inline-style exceptions (1: dynamic value).
+// Hardware type badge: no shadow/hover, sized for the screen rows. Each type
+// maps to its --color-poke-* token; color-mix derives fill/border/text from the
+// one token. The color is a runtime value from `type`, so it lives in style{}.
 const typeColorVar: Record<string, string> = {
   normal: '--color-poke-normal',
   fire: '--color-poke-fire',

@@ -1,9 +1,8 @@
 import { useEffect, useRef } from 'react';
 
-// Keyboard bindings that mirror the physical D-pad (Section 7 / Section 1).
-// Arrow keys drive list navigation; Enter doubles as the right/select action.
-// Co-located with the visual D-pad: DPad.tsx calls this with the same handlers
-// it wires to the on-screen arms, so keyboard and click stay in lockstep.
+// Keyboard bindings that mirror the physical D-pad. DPad.tsx passes the same
+// handlers it wires to the on-screen arms, so keyboard and click stay in
+// lockstep. Enter doubles as right/select.
 export interface DPadHandlers {
   onUp: () => void;
   onDown: () => void;

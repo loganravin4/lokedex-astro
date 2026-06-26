@@ -8,10 +8,7 @@ interface ContactRowProps {
   href: string;
 }
 
-// One contact line rendered as a link: Press Start 2P label + JetBrains Mono
-// value (Section 7 ContactEntry). The whole row is the anchor so the label and
-// value share one hit target; color-shift on hover only (no underline,
-// Section 13).
+// One contact line rendered as a link.
 function ContactRow({ label, value, href }: ContactRowProps) {
   return (
     <a
@@ -36,8 +33,7 @@ function ContactRow({ label, value, href }: ContactRowProps) {
   );
 }
 
-// Static contact card (Section 7 ContactEntry). Email opens a mailto:, the
-// social rows open in a new tab.
+  // Static contact card
 export default function ContactEntry() {
   return (
     <div

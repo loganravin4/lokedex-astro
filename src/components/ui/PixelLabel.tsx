@@ -3,16 +3,12 @@ import type { ReactNode } from 'react';
 
 interface PixelLabelProps {
   children: ReactNode;
-  // Spacing override (defaults to mb-1). ExperienceEntry uses mb-2 for its
-  // bullet/sub-project groups; ProjectEntry keeps the tighter default.
+  // Spacing override (defaults to mb-1).
   className?: string;
 }
 
-// Press Start 2P section label (DESC:, STACK:, LINKS:, HIGHLIGHTS:, PROJECTS:)
-// shared across detail-panel entries. Press Start 2P is for labels only, never
-// body copy (Section 5); letter-spacing 0.05em per the same section. The
-// font-family stays in style{} — a CSS-var font ref is unwieldy as an arbitrary
-// Tailwind class (Section 13 inline-style exception 3).
+// Press Start 2P label shared across detail-panel entries (DESC:, STACK:, etc).
+// font-family stays in style{}: a CSS-var font ref is unwieldy as a Tailwind class.
 export default function PixelLabel({ children, className }: PixelLabelProps) {
   return (
     <div

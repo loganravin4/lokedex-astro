@@ -1,5 +1,4 @@
-// Camera/sensor detail — top-left of the left half (Section 7). A ringed
-// housing with an inner lens. Self-positioned so LeftHalf stays readable.
+// Camera/sensor detail, top-left of the left half. Self-positioned.
 export default function SensorEye() {
   return (
     <div className="absolute top-[14px] left-[14px] w-[12px] h-[12px] rounded-full bg-[var(--sensor-eye-housing)] border-2 border-[var(--sensor-eye-ring)] flex items-center justify-center">

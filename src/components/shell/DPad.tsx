@@ -3,7 +3,6 @@ import { useSynth } from '../../hooks/useSynth';
 import { useDPad } from '../../hooks/useDPad';
 
 interface DPadProps {
-  // False during the boot sequence — input is inert until the list is live.
   isReady: boolean;
   onUp: () => void;
   onDown: () => void;
@@ -11,20 +10,12 @@ interface DPadProps {
   onRight: () => void;
 }
 
-// Cross-shaped directional pad (Section 6.4 / Section 7), laid out as a 3×3
-// grid of 24px cells totalling var(--dpad-size) = 72px. The four arms sit on
-// the cross's points; the center cell is a non-interactive filler.
-//
-// This component owns the *sound* for each direction (Section 1 mapping:
-// up/down = navigate, left = back, right = select) and delegates the actual
-// state change to the callbacks passed by the parent. The same handlers drive
-// the keyboard via useDPad, keeping click and arrow-key behaviour identical.
+// Cross-shaped directional pad -- 3×3 grid of 24px cells.
 export default function DPad({ isReady, onUp, onDown, onLeft, onRight }: DPadProps) {
   const { isMuted } = usePokedex();
   const synth = useSynth(isMuted);
 
-  // Gating here makes both the keyboard (useDPad) and the arm clicks inert
-  // during 'booting', and suppresses the sound too — nothing fires until ready.
+  // Gating here makes both the keyboard (useDPad) and the arm clicks inert during 'booting', and suppresses the sound too -- nothing fires until ready
   const handleUp = () => {
     if (!isReady) return;
     synth.navigate();
@@ -46,7 +37,7 @@ export default function DPad({ isReady, onUp, onDown, onLeft, onRight }: DPadPro
     onRight();
   };
 
-  // Keyboard arrows mirror the arms exactly (sounds included).
+  // Keyboard arrows mirror the arms exactly
   useDPad({ onUp: handleUp, onDown: handleDown, onLeft: handleLeft, onRight: handleRight });
 
   return (
@@ -63,7 +54,7 @@ export default function DPad({ isReady, onUp, onDown, onLeft, onRight }: DPadPro
         onClick={handleLeft}
         className="dpad-arm col-start-1 row-start-2 w-full h-full"
       />
-      {/* Center filler — fills the cross, not interactive */}
+      {/* Center filler */}
       <div className="col-start-2 row-start-2 bg-[var(--btn-dpad)]" />
       <button
         type="button"

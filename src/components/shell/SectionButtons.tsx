@@ -3,9 +3,7 @@ import type { Section } from '../../types/pokedex';
 import { usePokedex } from '../../hooks/usePokedex';
 import { useSynth } from '../../hooks/useSynth';
 
-// Section switcher row below the LIST screen (Section 7 / Section 6.6).
-// Clicking a button switches the active section, clears the selected entry and
-// resets the list cursor, then fires the sectionSwitch beep (Section 1).
+// Section switcher row below the LIST screen.
 const SECTIONS: { label: string; section: Section }[] = [
   { label: 'PROJ', section: 'projects' },
   { label: 'EXP', section: 'experience' },

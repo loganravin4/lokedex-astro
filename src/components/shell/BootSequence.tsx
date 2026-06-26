@@ -4,34 +4,23 @@ import { useSynth } from '../../hooks/useSynth';
 
 interface BootSequenceProps {
   onComplete: () => void;
-  // TODO(Task 9): replace hardcoded isMuted with real mute state from
-  // usePokedex context once it's wired in.
   isMuted: boolean;
 }
 
-// Boot sequence (Section 9) — plays inside the left screen when
-// animationState === 'booting'. Flicker on → type two lines at 60ms/char →
-// fill a 3-segment progress bar (with the boot arpeggio) → onComplete().
-// Skipped on repeat visits via the 'lokedex-booted' localStorage flag.
-//
-// Screen content, so JetBrains Mono per Section 5 (font-family in style is the
-// permitted CSS-var inline-style exception).
-
 const LINE1 = 'LOKÉDEX v2.0';
 const LINE2 = 'LOADING DATA...';
-const CHAR_MS = 60; // line 1 typing speed (Section 9)
+const CHAR_MS = 60; // line 1 typing speed
 const LINE2_CHAR_MS = 45; // line 2 a touch faster to keep total near ~2.5s
 const SEGMENTS = 3;
-const SEG_FILL_MS = 300; // per-segment fill (Section 9)
-const SEG_GAP_MS = 100; // gap between segments (Section 9)
+const SEG_FILL_MS = 300; // per-segment fill
+const SEG_GAP_MS = 100; // gap between segments
 const BOOTED_KEY = 'lokedex-booted';
 const MONO = { fontFamily: 'var(--font-family-mono)' } as const;
 
 export default function BootSequence({ onComplete, isMuted }: BootSequenceProps) {
   const synth = useSynth(isMuted);
 
-  // If we've booted before, render nothing and skip straight to ready —
-  // initialised from storage so there's no one-frame flash of boot text.
+  // If we've booted before, render nothing and skip straight to ready
   const [skipped] = useState(
     () => typeof window !== 'undefined' && !!localStorage.getItem(BOOTED_KEY),
   );
@@ -47,7 +36,6 @@ export default function BootSequence({ onComplete, isMuted }: BootSequenceProps)
   const synthRef = useRef(synth);
   synthRef.current = synth;
 
-  // Orchestrator — schedules the whole sequence once on mount.
   useEffect(() => {
     if (skipped) {
       onCompleteRef.current();
@@ -68,7 +56,6 @@ export default function BootSequence({ onComplete, isMuted }: BootSequenceProps)
       t += LINE2_CHAR_MS;
     }
 
-    // Progress bar — one arpeggio note per segment as it finishes filling.
     for (let s = 1; s <= SEGMENTS; s++) {
       at(t + SEG_FILL_MS, () => {
         setSegments(s);
@@ -78,9 +65,6 @@ export default function BootSequence({ onComplete, isMuted }: BootSequenceProps)
     }
 
     at(t, () => {
-      // C5 resolution — 100ms after G4, on the arpeggio beat. The note is
-      // scheduled on Tone's destination so it rings its full 80ms even as
-      // onComplete unmounts this component.
       synthRef.current.bootNote(3);
       localStorage.setItem(BOOTED_KEY, 'true');
       onCompleteRef.current();
@@ -89,7 +73,6 @@ export default function BootSequence({ onComplete, isMuted }: BootSequenceProps)
     return () => timers.forEach(clearTimeout);
   }, [skipped]);
 
-  // Cursor blink — 500ms interval (Section 9).
   useEffect(() => {
     if (skipped) return;
     const id = setInterval(() => setCursorOn((c) => !c), 500);
@@ -98,7 +81,7 @@ export default function BootSequence({ onComplete, isMuted }: BootSequenceProps)
 
   if (skipped) return null;
 
-  // Cursor sits at the end of whichever line is currently typing.
+  // Cursor sits at the end of whichever line is currently typing
   const cursorOnLine1 = line2 === 0;
   const cursor = (
     <span className={cursorOn ? '' : 'opacity-0'}>█</span>
@@ -121,7 +104,6 @@ export default function BootSequence({ onComplete, isMuted }: BootSequenceProps)
         {!cursorOnLine1 && cursor}
       </div>
 
-      {/* Progress bar — 3 segments, filled = yellow, empty = outline only */}
       <div className="flex gap-[6px] mt-4">
         {Array.from({ length: SEGMENTS }).map((_, i) => (
           <div

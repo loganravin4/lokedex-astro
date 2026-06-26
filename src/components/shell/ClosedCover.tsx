@@ -9,13 +9,10 @@ interface ClosedCoverProps {
   isMuted: boolean;
 }
 
-// Pre-open state: a single unified red panel (no hinge / no halves) wrapped
-// in <Tilt> for spring-physics mouse tracking (Section 7 + animation
-// hierarchy). Any click or keypress fires the mechanical open sound and
-// then hands control back to PokedexShell via onOpen().
+// Pre-open state
 export default function ClosedCover({ onOpen, isMuted }: ClosedCoverProps) {
   const synth = useSynth(isMuted);
-  // Guard so a near-simultaneous click + keypress can't open twice.
+  // Guard so a near-simultaneous click + keypress can't open twice
   const openedRef = useRef(false);
 
   const handleOpen = async () => {
@@ -25,8 +22,6 @@ export default function ClosedCover({ onOpen, isMuted }: ClosedCoverProps) {
     onOpen();
   };
 
-  // Keydown listener — "press any key". Cleaned up on unmount (the cover
-  // unmounts as soon as it opens).
   useEffect(() => {
     const onKey = () => {
       void handleOpen();
@@ -42,14 +37,10 @@ export default function ClosedCover({ onOpen, isMuted }: ClosedCoverProps) {
         className="pokedex-shell relative w-[var(--device-width)] h-[var(--device-height)] rounded-[18px] flex flex-col items-center justify-center cursor-pointer"
         onClick={() => void handleOpen()}
       >
-        {/* Indicator light — steady green glow, top-left.
-            Positioning stays here; IndicatorLight renders just the circle. */}
         <div className="absolute top-[20px] left-[20px]">
           <IndicatorLight on={true} />
         </div>
 
-        {/* Wordmark — shiny sweep over poke-yellow.
-            font-family kept in style (Section 13 inline-style exception 3). */}
         <div
           className="text-[20px] tracking-[0.1em]"
           style={{ fontFamily: 'var(--font-family-pokemon)' }}
@@ -57,7 +48,6 @@ export default function ClosedCover({ onOpen, isMuted }: ClosedCoverProps) {
           <ShinyText text="LOKÉDEX" color="var(--color-poke-yellow)" />
         </div>
 
-        {/* Subtitle */}
         <div
           className="text-[8px] text-[color:var(--detail-muted)] mt-3"
           style={{ fontFamily: 'var(--font-family-pokemon)' }}
@@ -65,8 +55,6 @@ export default function ClosedCover({ onOpen, isMuted }: ClosedCoverProps) {
           TRAINER PORTFOLIO
         </div>
 
-        {/* Blinking prompt — animation kept in style (custom keyframe, not
-            expressible as a Tailwind class per spec). */}
         <div
           className="text-[8px] text-[color:var(--detail-muted)] mt-12"
           style={{

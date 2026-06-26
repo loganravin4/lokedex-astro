@@ -1,28 +1,21 @@
 import { useEffect, useState } from 'react';
 import type { SpotifyTrack } from '../../lib/spotify';
 
-// Compact now-playing readout for the trainer card (DATA screen). Hardware
-// aesthetic: JetBrains Mono content, a Press Start 2P pixel label, colors from
-// CSS variables only, no white backgrounds. Intentionally lightweight — no
-// framer-motion (and so no ShinyText, which depends on it); the "now playing"
-// state is animated with the CSS `equalizer` keyframe (global.css). Shows the
-// track name + artist while playing, or NOT PLAYING otherwise.
+// Compact now-playing readout for the trainer card (DATA screen).
 
 const NOW_PLAYING_ENDPOINT = '/api/spotify/now-playing';
 const BAR_COUNT = 4;
 
 // Returns the normalized track, or null on anything that isn't active playback
-// (the serverless function already returns 200 + null for all failure modes).
 function fetchNowPlaying(): Promise<SpotifyTrack | null> {
   return fetch(NOW_PLAYING_ENDPOINT)
     .then((res) => (res.ok ? res.json() : null))
     .catch(() => null);
 }
 
-// CSS equalizer — BAR_COUNT bars. Animating (per-bar height + stagger) while
+// CSS equalizer -- BAR_COUNT bars. Animating (per-bar height + stagger) while
 // playing, flat and short when idle. Animation lives in inline style because a
-// custom keyframe with per-bar timing isn't expressible as a Tailwind class —
-// the same exception the codebase uses for the `blink` cursor (Section 13).
+// custom keyframe with per-bar timing isn't expressible as a Tailwind class
 function Equalizer({ playing }: { playing: boolean }) {
   return (
     <div className="flex h-[12px] items-end gap-[2px]" aria-hidden="true">
@@ -48,7 +41,7 @@ function Equalizer({ playing }: { playing: boolean }) {
 export default function SpotifyWidget() {
   const [track, setTrack] = useState<SpotifyTrack | null>(null);
 
-  // Initial fetch on mount.
+  // Initial fetch on mount
   useEffect(() => {
     let active = true;
     fetchNowPlaying().then((t) => {
@@ -61,20 +54,9 @@ export default function SpotifyWidget() {
 
   const isPlaying = !!track?.isPlaying;
 
-  // The two polling effects below are mutually exclusive, NOT racing — only one
-  // timer is ever live at a time, for two reasons:
-  //   1. Both branch on the same `isPlaying` from one render: the playing
-  //      effect arms a timer only when it's true, the idle effect only when
-  //      false. A single render can't be both, so at most one arms per render.
-  //   2. `isPlaying` is in both dep arrays, so when it flips React re-runs both
-  //      — and React runs ALL effect cleanups before ANY setups on a commit.
-  //      So the outgoing timer (e.g. the playing setTimeout) is always cleared
-  //      before the incoming one (the idle setInterval) is armed, with no
-  //      overlap window. Keeping them split keeps each branch's deps minimal.
-
   // While playing: refresh as the current track is about to end (so the next
   // song appears promptly), capped at 30s to also catch manual skips. Skipped
-  // while the tab is hidden.
+  // while the tab is hidden
   useEffect(() => {
     if (!isPlaying || document.hidden) return;
     const remaining = (track?.durationMs ?? 0) - (track?.progressMs ?? 0);
@@ -86,7 +68,7 @@ export default function SpotifyWidget() {
     return () => clearTimeout(id);
   }, [isPlaying, track?.id, track?.progressMs, track?.durationMs]);
 
-  // While idle: poll every 60s so playback that starts later gets picked up.
+  // While idle: poll every 60s so playback that starts later gets picked up
   useEffect(() => {
     if (isPlaying) return;
     const id = setInterval(() => {

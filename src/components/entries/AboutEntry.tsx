@@ -4,8 +4,8 @@ import SpotifyWidget from '../features/SpotifyWidget';
 const GITHUB_URL = 'https://github.com/loganravin4';
 const LINKEDIN_URL = 'https://www.linkedin.com/in/logan-ravinuthala';
 
-// A trainer-card stat line: Press Start 2P label + JetBrains Mono value
-// (Section 7 AboutEntry). Baseline-aligned so the two fonts sit on one line.
+// A trainer-card stat line: Press Start 2P label + JetBrains Mono value.
+// Baseline-aligned so the two fonts sit on one line.
 function StatRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline gap-2">
@@ -22,15 +22,12 @@ function StatRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-// The Logan trainer card (Section 7 AboutEntry). Static content — no Sanity
-// data. Body copy mirrors the tone/facts of the live site (loganravinuthala.dev).
 export default function AboutEntry() {
   return (
     <div
       className="no-scrollbar h-full overflow-y-auto p-[var(--screen-padding)]"
       style={{ fontFamily: 'var(--font-family-mono)' }}
     >
-      {/* Trainer stat card */}
       <div className="flex flex-col gap-1">
         <StatRow label="TRAINER:" value="Logan Ravinuthala" />
         <StatRow label="CLASS:" value="Computer Engineering + CS" />
@@ -40,18 +37,17 @@ export default function AboutEntry() {
 
       <div className="my-3 h-px bg-[var(--detail-divider)]" />
 
-      {/* Trainer bio — first-person, punchy */}
       <div className="flex flex-col gap-2 text-[length:var(--text-screen-sm)] leading-relaxed text-[color:var(--detail-body)]">
         <p>
-          I'm a Computer Engineering + CS student at Northeastern who builds
+          I'm a Computer Engineering & Computer Science student at Northeastern who builds
           things that actually ship. Incoming software engineering co-op at MORSE
           Corp, working on technical solutions inside the U.S. national security
           ecosystem.
         </p>
         <p>
-          I'm a Member of Technical Staff at CampusGTM, a full-stack AI SaaS.
+          I'm a Generative AI Engineering Intern at Trinity Life Sciences, working on the InsightsEDGE Platform.
           Before that I was a software engineer at NExT Consulting, where I shipped
-          an AI Chief-of-Staff and a data analytics platform for clients — and
+          an AI Chief-of-Staff and a data analytics platform for clients, and
           TA'd Databases and Fundamentals of CS along the way.
         </p>
         <p>
@@ -62,7 +58,7 @@ export default function AboutEntry() {
         </p>
       </div>
 
-      {/* Interests as type badges — type colors used creatively */}
+      {/* Interests as type badges */}
       <div className="mt-3 flex flex-wrap gap-1">
         <TypeBadge type="fighting" label="Weightlifting" />
         <TypeBadge type="psychic" label="Music" />
@@ -70,7 +66,6 @@ export default function AboutEntry() {
         <TypeBadge type="grass" label="Pokémon" />
       </div>
 
-      {/* Links */}
       <div className="mt-4 flex flex-wrap gap-3">
         <a
           href={GITHUB_URL}
@@ -90,8 +85,6 @@ export default function AboutEntry() {
         </a>
       </div>
 
-      {/* Live Spotify now-playing — a natural extension of the trainer card
-          (the bio already nods at Spotify minutes). Compact, screen-native. */}
       <SpotifyWidget />
     </div>
   );

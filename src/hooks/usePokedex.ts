@@ -1,12 +1,7 @@
-// Central device state shared by every component — POKEDEX_SPEC.md Section 11.
+// Central device state shared by every component. Animation/view state stays
+// local to PokedexShell, not here.
 //
-// This context owns *content* state (which section is active, which entry is
-// selected, where the list cursor sits, and global mute). Animation state
-// (`AnimationState`) deliberately stays local to PokedexShell — it describes the
-// fold/boot view machine, not the content the device is displaying.
-//
-// Implemented with createElement rather than JSX so the file can keep the
-// `.ts` extension named in the Section 2 project structure.
+// Uses createElement rather than JSX so the file can keep its `.ts` extension.
 
 import {
   createContext,
@@ -19,7 +14,7 @@ import {
 import type { ReactNode } from 'react';
 import type { Section } from '../types/pokedex';
 
-// Section 1 / Section 10: mute state persists here so useSynth can gate playback.
+// Mute state persists here so useSynth can gate playback.
 const MUTE_STORAGE_KEY = 'lokedex-muted';
 
 const VALID_SECTIONS: Section[] = ['projects', 'experience', 'about', 'contact'];
@@ -31,7 +26,7 @@ function sectionHasEntry(section: Section): boolean {
 
 interface PokedexContextValue {
   activeSection: Section;
-  selectedEntry: string | null; // entry _id (see slug note below)
+  selectedEntry: string | null; // entry _id
   focusedIndex: number; // list cursor position
   isMuted: boolean;
   setActiveSection: (s: Section) => void;
@@ -40,7 +35,7 @@ interface PokedexContextValue {
   toggleMute: () => void;
 }
 
-// No default value — usePokedex throws if read outside the provider.
+// No default value -- usePokedex throws if read outside the provider.
 const PokedexContext = createContext<PokedexContextValue | null>(null);
 
 interface ParsedHash {
@@ -48,12 +43,9 @@ interface ParsedHash {
   entry: string | null;
 }
 
-// Hash format (Section 11): #projects/slug, #experience/slug, #about, #contact.
-// Empty or unrecognised hashes fall back to the projects section, no entry.
-//
-// NOTE(Task 13): the segment after the section is a *slug*, but selectedEntry is
-// meant to hold an entry _id. Until useSanityData is wired, we store the raw slug
-// here as a temporary stand-in; slug→_id resolution lands in Task 13.
+// Hash format: #projects/slug, #experience/slug, #about, #contact. Unrecognised
+// hashes fall back to projects with no entry. A projects slug is resolved to an
+// _id later (in PokedexShell); the stored value is otherwise an entry _id.
 function parseHash(rawHash: string): ParsedHash {
   const raw = rawHash.replace(/^#/, '');
   if (!raw) return { section: 'projects', entry: null };

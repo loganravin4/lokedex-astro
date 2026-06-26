@@ -4,12 +4,10 @@ import type { Project } from '../../types/sanity';
 
 interface ProjectEntryProps {
   project: Project;
-  number: string; // zero-padded entry number ('001'), formatted upstream
+  number: string; // zero-padded entry number ('001')
 }
 
-// Detail-panel layout for a single project (Section 7 ProjectEntry). All text
-// is JetBrains Mono — set on the scroll container and inherited — except the
-// pixel labels above, which opt into Press Start 2P themselves.
+// Detail-panel layout for a single project
 export default function ProjectEntry({ project, number }: ProjectEntryProps) {
   const hasLinks = Boolean(project.github || project.link);
 
@@ -18,7 +16,6 @@ export default function ProjectEntry({ project, number }: ProjectEntryProps) {
       className="no-scrollbar h-full overflow-y-auto p-[var(--screen-padding)]"
       style={{ fontFamily: 'var(--font-family-mono)' }}
     >
-      {/* Header */}
       <div className="text-[length:var(--text-screen-xs)] text-[color:var(--list-number)]">
         #{number}
       </div>
@@ -35,13 +32,11 @@ export default function ProjectEntry({ project, number }: ProjectEntryProps) {
 
       <div className="my-3 h-px bg-[var(--detail-divider)]" />
 
-      {/* Description */}
       <PixelLabel>DESC:</PixelLabel>
       <p className="text-[length:var(--text-screen-sm)] leading-relaxed text-[color:var(--detail-body)]">
         {project.description}
       </p>
 
-      {/* Stack */}
       {project.techs && project.techs.length > 0 && (
         <>
           <div className="mt-3">
@@ -60,7 +55,6 @@ export default function ProjectEntry({ project, number }: ProjectEntryProps) {
         </>
       )}
 
-      {/* Links */}
       {hasLinks && (
         <>
           <div className="mt-3">
