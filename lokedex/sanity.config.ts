@@ -28,7 +28,7 @@ export default defineConfig({
               type: 'experience',
               id: 'experience-work',
               title: 'Work Experience',
-              filter: '!defined(category) || category != "campus"',
+              filter: '(!defined(category) || category != "campus")',
               S,
               context,
             }),
