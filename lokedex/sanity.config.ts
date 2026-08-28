@@ -23,9 +23,20 @@ export default defineConfig({
               S,
               context,
             }),
+            // Untagged docs fall into "Work Experience" so nothing can go missing.
             orderableDocumentListDeskItem({
               type: 'experience',
-              title: 'Experiences',
+              id: 'experience-work',
+              title: 'Work Experience',
+              filter: '!defined(category) || category != "campus"',
+              S,
+              context,
+            }),
+            orderableDocumentListDeskItem({
+              type: 'experience',
+              id: 'experience-campus',
+              title: 'Campus & Clubs',
+              filter: 'category == "campus"',
               S,
               context,
             }),

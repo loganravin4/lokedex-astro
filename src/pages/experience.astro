@@ -4,8 +4,23 @@ import ExperienceCard from '../components/features/ExperienceCard';
 import AnalyticsTracker from '../components/analytics/AnalyticsTracker';
 import { fetchExperiences } from '../lib/fetchExperiences';
 
-// Fetch all experiences from Sanity
+// Fetch all experiences from Sanity, then split them into their two sections.
 const experiences = await fetchExperiences();
+
+const sections = [
+  {
+    id: 'work',
+    heading: 'WORK EXPERIENCE',
+    blurb: 'Co-ops, internships, and paid roles',
+    entries: experiences.filter((e) => e.category !== 'campus'),
+  },
+  {
+    id: 'campus',
+    heading: 'CAMPUS & CLUBS',
+    blurb: 'Student orgs, studios, and clubs at Northeastern',
+    entries: experiences.filter((e) => e.category === 'campus'),
+  },
+].filter((section) => section.entries.length > 0);
 ---
 
 <BaseLayout title="Gym Badges - Logan's Lokédex">
@@ -29,25 +44,38 @@ const experiences = await fetchExperiences();
     </section>
 
     <!-- Experience Timeline -->
-    <section class="pb-8">
-      <div class="flex flex-col gap-12">
-        {experiences.map((experience, index) => (
-          <ExperienceCard
-            title={experience.title}
-            company={experience.company}
-            companyLogo={experience.companyLogo}
-            companyWebsite={experience.companyWebsite}
-            location={experience.location}
-            startDate={experience.startDate}
-            endDate={experience.endDate}
-            current={experience.current}
-            description={experience.description}
-            projects={experience.projects}
-            index={index}
-            client:load
-          />
-        ))}
-      </div>
-    </section>
+    {sections.map((section) => (
+      <section class="pb-8 mb-8">
+        <div class="flex items-center gap-4 mb-8">
+          <div class="h-1 flex-1 bg-poke-yellow/30 rounded-full"></div>
+          <div class="text-center">
+            <h2 class="font-pokemon text-xl md:text-2xl text-poke-yellow">
+              {section.heading}
+            </h2>
+            <p class="text-sm text-white/60 mt-2">{section.blurb}</p>
+          </div>
+          <div class="h-1 flex-1 bg-poke-yellow/30 rounded-full"></div>
+        </div>
+
+        <div class="flex flex-col gap-12">
+          {section.entries.map((experience, index) => (
+            <ExperienceCard
+              title={experience.title}
+              company={experience.company}
+              companyLogo={experience.companyLogo}
+              companyWebsite={experience.companyWebsite}
+              location={experience.location}
+              startDate={experience.startDate}
+              endDate={experience.endDate}
+              current={experience.current}
+              description={experience.description}
+              projects={experience.projects}
+              index={index}
+              client:load
+            />
+          ))}
+        </div>
+      </section>
+    ))}
   </main>
 </BaseLayout>

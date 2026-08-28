@@ -21,6 +21,20 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'category',
+      title: 'Category',
+      type: 'string',
+      description: 'Which section of the Experience page this shows up in',
+      options: {
+        list: [
+          {title: 'Work Experience', value: 'work'},
+          {title: 'Campus & Clubs', value: 'campus'},
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'work',
+    }),
+    defineField({
       name: 'companyWebsite',
       title: 'Company Website',
       type: 'url',

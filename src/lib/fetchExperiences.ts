@@ -15,10 +15,13 @@ export interface ExperienceProject {
   github?: string;
 }
 
+export type ExperienceCategory = 'work' | 'campus';
+
 export interface Experience {
   _id: string;
   title: string;
   company: string;
+  category: ExperienceCategory;
   companyLogo?: any;
   companyWebsite?: string;
   location: string;
@@ -40,6 +43,7 @@ export async function fetchExperiences(): Promise<Experience[]> {
     _id,
     title,
     company,
+    "category": coalesce(category, "work"),
     companyLogo,
     companyWebsite,
     location,
